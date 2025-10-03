@@ -414,7 +414,7 @@
     <div id="loadingIndicator" class="fixed inset-0 z-50 items-center justify-center hidden bg-black/50"><div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500"></div></div>
     
     <!-- Toast Notification -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50"></div>
+    <div id="toastContainer" class="fixed top-5 right-5 z-[100]"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -830,37 +830,37 @@
         
         document.getElementById('addBankAccountForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const data = { type: 'Bank', name: document.getElementById('bankAccountName').value, balance: parseFloat(document.getElementById('bankAccountBalance').value), bankName: document.getElementById('bankName').value, accountNumber: document.getElementById('accountNumber').value, ifscCode: document.getElementById('ifscCode').value, branchName: document.getElementById('branchName').value, createdAt: serverTimestamp() };
+            const data = { type: 'Bank', name: document.getElementById('bankAccountName').value, balance: parseFloat(document.getElementById('bankAccountBalance').value), bankName: document.getElementById('bankName').value, accountNumber: document.getElementById('accountNumber').value, ifscCode: document.getElementById('ifscCode').value, branchName: document.getElementById('branchName').value, createdAt: new Date().toISOString() };
             saveAccount(data, 'addBankAccountModal', 'addBankAccountForm');
         });
 
         document.getElementById('addCreditCardForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const data = { type: 'Credit Card', name: document.getElementById('creditCardNickname').value, bankName: document.getElementById('creditCardBankName').value, lastFour: document.getElementById('creditCardLastFour').value, creditLimit: parseFloat(document.getElementById('creditCardLimit').value), linkedBank: document.getElementById('creditCardLinkedBank').value, createdAt: serverTimestamp() };
+            const data = { type: 'Credit Card', name: document.getElementById('creditCardNickname').value, bankName: document.getElementById('creditCardBankName').value, lastFour: document.getElementById('creditCardLastFour').value, creditLimit: parseFloat(document.getElementById('creditCardLimit').value), linkedBank: document.getElementById('creditCardLinkedBank').value, createdAt: new Date().toISOString() };
             saveAccount(data, 'addCreditCardModal', 'addCreditCardForm');
         });
 
         document.getElementById('addDebitCardForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const data = { type: 'Debit Card', name: document.getElementById('debitCardNickname').value, bankName: document.getElementById('debitCardBankName').value, lastFour: document.getElementById('debitCardLastFour').value, linkedBank: document.getElementById('debitCardLinkedBank').value, createdAt: serverTimestamp() };
+            const data = { type: 'Debit Card', name: document.getElementById('debitCardNickname').value, bankName: document.getElementById('debitCardBankName').value, lastFour: document.getElementById('debitCardLastFour').value, linkedBank: document.getElementById('debitCardLinkedBank').value, createdAt: new Date().toISOString() };
             saveAccount(data, 'addDebitCardModal', 'addDebitCardForm');
         });
 
          document.getElementById('addWalletForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const data = { type: 'Wallet', name: document.getElementById('walletName').value, balance: parseFloat(document.getElementById('walletBalance').value), linkedBank: document.getElementById('walletLinkedBank').value, createdAt: serverTimestamp() };
+            const data = { type: 'Wallet', name: document.getElementById('walletName').value, balance: parseFloat(document.getElementById('walletBalance').value), linkedBank: document.getElementById('walletLinkedBank').value, createdAt: new Date().toISOString() };
             saveAccount(data, 'addWalletModal', 'addWalletForm');
         });
 
         document.getElementById('addUpiForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const data = { type: 'UPI', name: document.getElementById('upiAppName').value, upiId: document.getElementById('upiId').value, linkedBank: document.getElementById('upiLinkedBank').value, createdAt: serverTimestamp() };
+            const data = { type: 'UPI', name: document.getElementById('upiAppName').value, upiId: document.getElementById('upiId').value, linkedBank: document.getElementById('upiLinkedBank').value, createdAt: new Date().toISOString() };
             saveAccount(data, 'addUpiModal', 'addUpiForm');
         });
 
         document.getElementById('addCashForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const data = { type: 'Cash', name: document.getElementById('cashNickname').value, balance: parseFloat(document.getElementById('cashBalance').value), createdAt: serverTimestamp() };
+            const data = { type: 'Cash', name: document.getElementById('cashNickname').value, balance: parseFloat(document.getElementById('cashBalance').value), createdAt: new Date().toISOString() };
             saveAccount(data, 'addCashModal', 'addCashForm');
         });
 
@@ -1003,7 +1003,7 @@
                 
                 const txCollectionPath = txType === 'personal' ? 'personalTransactions' : 'homeTransactions';
                 const txCollectionRef = collection(db, `/artifacts/${appId}/users/${userId}/${txCollectionPath}`);
-                batch.set(doc(txCollectionRef), { ...data, createdAt: serverTimestamp() });
+                batch.set(doc(txCollectionRef), { ...data, createdAt: new Date().toISOString() });
                 
                 if (balanceUpdate !== 0) {
                     batch.update(accountRef, { balance: increment(balanceUpdate) });
@@ -1229,4 +1229,6 @@
     </script>
 </body>
 </html>
+
+
 
