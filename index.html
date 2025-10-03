@@ -452,7 +452,6 @@
                     if (user) {
                         userId = user.uid;
                         await fetchInitialData();
-                        switchView('personal'); // Default to personal view
                     } else {
                          if (typeof __initial_auth_token !== 'undefined') { 
                             await signInWithCustomToken(auth, __initial_auth_token);
@@ -461,6 +460,10 @@
                          }
                     }
                 });
+                
+                // Immediately render the default view so the screen is not blank on load
+                switchView('personal');
+
             } catch (err) {
                 console.error("Firebase initialization error: ", err);
                 viewContainer.innerHTML = `<p class="text-center text-red-400">Error connecting to the database.</p>`;
@@ -469,6 +472,8 @@
         
         // --- Data Fetching & Subscriptions ---
         async function fetchInitialData() {
+            if (!userId) return; // Guard clause to prevent running without a user
+
             loadingIndicator.style.display = 'flex';
             
             onSnapshot(collection(db, `/artifacts/${appId}/users/${userId}/accounts`), (snapshot) => {
@@ -1244,6 +1249,7 @@
     </script>
 </body>
 </html>
+
 
 
 
