@@ -967,15 +967,23 @@
 
         async function saveAccount(data, modalId, formId) {
             loadingIndicator.style.display = 'flex';
+            
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Request timed out. Check Firebase config.')), 10000) // 10 second timeout
+            );
+
             try {
                 const accountsCollection = collection(db, `/artifacts/${appId}/users/${userId}/accounts`);
-                await addDoc(accountsCollection, data);
+                await Promise.race([
+                    addDoc(accountsCollection, data),
+                    timeoutPromise
+                ]);
                 showToast("Account added successfully!", "success");
                 closeModal(modalId);
                 document.getElementById(formId).reset();
             } catch (err) {
                 console.error("Error saving account: ", err);
-                showToast("Failed to save account.", "error");
+                showToast(`Failed to save account. ${err.message}`, "error");
             } finally {
                 loadingIndicator.style.display = 'none';
             }
@@ -983,6 +991,10 @@
 
         async function saveTransaction(txType, data, modalId, formId) {
             loadingIndicator.style.display = 'flex';
+
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Request timed out. Check Firebase config.')), 10000) // 10 second timeout
+            );
             
             const accountRef = doc(db, `/artifacts/${appId}/users/${userId}/accounts`, data.accountId);
             const account = appState.accounts.find(a => a.id === data.accountId);
@@ -1009,14 +1021,17 @@
                     batch.update(accountRef, { balance: increment(balanceUpdate) });
                 }
 
-                await batch.commit();
+                await Promise.race([
+                    batch.commit(),
+                    timeoutPromise
+                ]);
 
                 showToast("Transaction saved successfully!", "success");
                 closeModal(modalId);
                 document.getElementById(formId).reset();
             } catch (err) {
                 console.error("Error saving transaction: ", err);
-                showToast("Failed to save transaction.", "error");
+                showToast(`Failed to save transaction. ${err.message}`, "error");
             } finally {
                 loadingIndicator.style.display = 'none';
             }
@@ -1229,6 +1244,7 @@
     </script>
 </body>
 </html>
+
 
 
 
