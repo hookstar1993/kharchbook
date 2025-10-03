@@ -10,8 +10,8 @@
           theme: {
             extend: {
               colors: {
-                'theme-dark': '#014224',
-                'theme-light': '#C1DFE9',
+                'theme-dark': '#234E70',
+                'theme-light': '#fbf8BE',
               }
             }
           }
@@ -24,31 +24,34 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #014224; /* Theme Dark */
-            color: #C1DFE9; /* Theme Light */
+            background-color: #234E70; /* Theme Dark */
+            color: #fbf8BE; /* Theme Light */
         }
         .glass-card {
-            background: rgba(193, 223, 233, 0.1); /* Light theme with opacity */
+            background: rgba(251, 248, 190, 0.05); /* Light theme with opacity */
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-radius: 12px;
-            border: 1px solid rgba(193, 223, 233, 0.2);
+            border: 1px solid rgba(251, 248, 190, 0.15);
         }
         .modal-backdrop {
-             background: rgba(1, 66, 36, 0.7); /* Dark theme with opacity */
+             background: rgba(35, 78, 112, 0.7); /* Dark theme with opacity */
              backdrop-filter: blur(8px);
              -webkit-backdrop-filter: blur(8px);
         }
         .nav-button { transition: all 0.3s ease; position: relative; }
-        .nav-button.active { color: #C1DFE9; font-weight: 600; }
-        .nav-button.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background-color: #C1DFE9; border-radius: 1px; }
+        .nav-button.active { color: #fbf8BE; font-weight: 600; }
+        .nav-button.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background-color: #fbf8BE; border-radius: 1px; }
         .toast { animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 2.5s; }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         .account-type-card { transition: all 0.2s ease-in-out; }
-        .account-type-card:hover { transform: translateY(-5px); background: rgba(193, 223, 233, 0.15); }
+        .account-type-card:hover { transform: translateY(-5px); background: rgba(251, 248, 190, 0.1); }
         input, select {
             color-scheme: dark;
+        }
+        .text-theme-dark {
+             color: #234E70;
         }
     </style>
 </head>
@@ -94,127 +97,81 @@
     
     <!-- All Modals are here -->
     
-    <!-- Add Personal Transaction Modal -->
     <div id="addPersonalTransactionModal" class="fixed inset-0 z-50 items-center justify-center hidden">
         <div class="modal-backdrop absolute inset-0" onclick="closeModal('addPersonalTransactionModal')"></div>
         <div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
             <button onclick="closeModal('addPersonalTransactionModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
             <h2 class="text-2xl font-bold text-theme-light mb-6">Add Personal Transaction</h2>
             <form id="addPersonalTransactionForm" class="space-y-4">
-                <div>
-                    <label for="personalTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label>
-                    <input type="date" id="personalTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
+                <div><label for="personalTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label><input type="date" id="personalTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><label for="personalTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label><select id="personalTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required><option value="expense">Expense</option><option value="income">Income</option></select></div>
+                    <div><label for="personalTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label><select id="personalTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="personalTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label>
-                        <select id="personalTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
-                            <option value="expense">Expense</option>
-                            <option value="income">Income</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="personalTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label>
-                        <select id="personalTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select>
-                    </div>
+                     <div><label for="personalTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label><select id="personalTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
+                     <div><label for="personalTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label><input type="number" id="personalTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div>
-                        <label for="personalTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label>
-                        <select id="personalTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select>
-                    </div>
-                    <div>
-                        <label for="personalTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label>
-                        <input type="number" id="personalTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
-                    </div>
-                </div>
-                <div>
-                    <label for="personalTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label>
-                    <input type="text" id="personalTxDescription" placeholder="e.g., Lunch with friends" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
-                </div>
+                <div><label for="personalTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label><input type="text" id="personalTxDescription" placeholder="e.g., Lunch with friends" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
                 <button type="submit" class="w-full p-4 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90 transition-all">Save Transaction</button>
             </form>
         </div>
     </div>
-
-    <!-- Add Home Transaction Modal -->
+    
      <div id="addHomeTransactionModal" class="fixed inset-0 z-50 items-center justify-center hidden">
         <div class="modal-backdrop absolute inset-0" onclick="closeModal('addHomeTransactionModal')"></div>
         <div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
             <button onclick="closeModal('addHomeTransactionModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
             <h2 class="text-2xl font-bold text-theme-light mb-6">Add Home Transaction</h2>
             <form id="addHomeTransactionForm" class="space-y-4">
-                <div>
-                    <label for="homeTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label>
-                    <input type="date" id="homeTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
+                <div><label for="homeTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label><input type="date" id="homeTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div><label for="homeTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label><select id="homeTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required><option value="expense">Expense</option><option value="income">Income</option></select></div>
+                    <div><label for="homeTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label><select id="homeTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div>
-                        <label for="homeTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label>
-                        <select id="homeTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
-                            <option value="expense">Expense</option>
-                            <option value="income">Income</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="homeTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label>
-                        <select id="homeTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select>
-                    </div>
+                     <div><label for="homeTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label><select id="homeTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
+                     <div><label for="homeTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label><input type="number" id="homeTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div>
-                        <label for="homeTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label>
-                        <select id="homeTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select>
-                    </div>
-                    <div>
-                        <label for="homeTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label>
-                        <input type="number" id="homeTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
-                    </div>
-                </div>
-                <div>
-                    <label for="homeTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label>
-                    <input type="text" id="homeTxDescription" placeholder="e.g., Monthly groceries" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
-                </div>
+                <div><label for="homeTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label><input type="text" id="homeTxDescription" placeholder="e.g., Monthly groceries" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
                 <button type="submit" class="w-full p-4 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90 transition-all">Save Transaction</button>
             </form>
         </div>
     </div>
     
-    <!-- Add Account Type Selection Modal -->
     <div id="addAccountTypeModal" class="fixed inset-0 z-50 items-center justify-center hidden">
         <div class="modal-backdrop absolute inset-0" onclick="closeModal('addAccountTypeModal')"></div>
         <div class="glass-card w-full max-w-2xl m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
             <button onclick="closeModal('addAccountTypeModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
             <h2 class="text-2xl font-bold text-theme-light mb-6 text-center">Select Account Type</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <button onclick="selectAccountType('Bank')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg">
-                    <i data-lucide="landmark" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Bank</span>
-                </button>
-                <button onclick="selectAccountType('Credit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg">
-                    <i data-lucide="credit-card" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Credit Card</span>
-                </button>
-                 <button onclick="selectAccountType('Debit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg">
-                    <i data-lucide="credit-card" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Debit Card</span>
-                </button>
-                <button onclick="selectAccountType('Wallet')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg">
-                    <i data-lucide="wallet" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Wallet</span>
-                </button>
-                <button onclick="selectAccountType('UPI')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg">
-                    <i data-lucide="zap" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">UPI</span>
-                </button>
-                 <button onclick="selectAccountType('Cash')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg">
-                    <i data-lucide="banknote" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Cash</span>
-                </button>
+                <button onclick="selectAccountType('Bank')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="landmark" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Bank</span></button>
+                <button onclick="selectAccountType('Credit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="credit-card" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Credit Card</span></button>
+                 <button onclick="selectAccountType('Debit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="credit-card" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Debit Card</span></button>
+                <button onclick="selectAccountType('Wallet')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="wallet" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Wallet</span></button>
+                <button onclick="selectAccountType('UPI')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="zap" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">UPI</span></button>
+                 <button onclick="selectAccountType('Cash')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="banknote" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Cash</span></button>
             </div>
         </div>
     </div>
-
-    <!-- The rest of the modals are here... -->
     
-    <!-- Loading indicator -->
+    <div id="manageCategoriesModal" class="fixed inset-0 z-50 items-center justify-center hidden">
+        <div class="modal-backdrop absolute inset-0" onclick="closeModal('manageCategoriesModal')"></div>
+        <div class="glass-card w-full max-w-md m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
+            <button onclick="closeModal('manageCategoriesModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <h2 class="text-2xl font-bold text-theme-light mb-6">Manage Categories</h2>
+            <form id="addCategoryForm" class="flex gap-2 mb-4">
+                <input type="text" id="newCategoryName" placeholder="New category name" class="flex-grow p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
+                <button type="submit" class="p-3 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90 transition-all"><i data-lucide="plus" class="w-6 h-6"></i></button>
+            </form>
+            <div id="categoryList" class="space-y-2 max-h-60 overflow-y-auto"></div>
+        </div>
+    </div>
+    
+    <!-- All other modals would be here but are redacted for brevity -->
+
     <div id="loadingIndicator" class="fixed inset-0 z-[101] items-center justify-center hidden bg-black/50"><div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-theme-light"></div></div>
     
-    <!-- Toast Notification -->
     <div id="toastContainer" class="fixed top-5 right-5 z-[100]"></div>
 
     <script type="module">
@@ -222,9 +179,6 @@
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, writeBatch, increment, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        // ===================================================================================
-        // YOUR FIREBASE KEYS
-        // ===================================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCIYq9g1bCcx82Naieth_-dCo0h154VMo8",
             authDomain: "myexpensetracker-a9118.firebaseapp.com",
@@ -234,16 +188,13 @@
             appId: "1:172584825601:web:456c446a4ecdab2faa2100",
             measurementId: "G-HQ4FWR8RKH"
         };
-        // ===================================================================================
 
-        // --- App State ---
         let db, auth, userId;
         let appState = {
             accounts: [], personalTransactions: [], homeTransactions: [], categories: [], currentView: 'personal'
         };
         let charts = {};
 
-        // --- UI Elements ---
         const loginView = document.getElementById('loginView');
         const appView = document.getElementById('app');
         const viewContainer = document.getElementById('viewContainer');
@@ -252,7 +203,6 @@
         const signInBtn = document.getElementById('signInBtn');
         const signOutBtn = document.getElementById('signOutBtn');
 
-        // --- App Initialization ---
         function initialize() {
             try {
                 const app = initializeApp(firebaseConfig);
@@ -271,111 +221,76 @@
                         userId = null;
                         loginView.classList.remove('hidden');
                         appView.classList.add('hidden');
+                        if (Object.values(charts).length > 0) {
+                            Object.values(charts).forEach(chart => chart.destroy());
+                            charts = {};
+                        }
                     }
                 });
 
             } catch (err) {
                 console.error("Firebase initialization error: ", err);
-                if(firebaseConfig.apiKey.startsWith("PASTE_")) {
-                    showToast("Configuration Error. Please paste your Firebase keys.", "error");
-                } else {
-                    showToast("Error connecting to Firebase.", "error");
-                }
+                showToast("Error connecting to Firebase.", "error");
             }
         }
 
-        // --- Authentication ---
         signInBtn.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Google Sign-In Error", error);
-                showToast("Failed to sign in with Google.", "error");
-            }
+            try { await signInWithPopup(auth, provider); }
+            catch (error) { console.error("Google Sign-In Error", error); showToast("Failed to sign in.", "error"); }
         });
 
         signOutBtn.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Sign Out Error", error);
-            }
+            try { await signOut(auth); }
+            catch (error) { console.error("Sign Out Error", error); }
         });
 
         function displayUserProfile(user) {
-            document.getElementById('userProfile').innerHTML = `
-                <img src="${user.photoURL}" alt="${user.displayName}" class="w-10 h-10 rounded-full border-2 border-theme-light/30">
-                <div>
-                    <p class="font-semibold text-sm text-theme-light">${user.displayName}</p>
-                    <p class="text-xs text-theme-light/70">${user.email}</p>
-                </div>
-            `;
+            document.getElementById('userProfile').innerHTML = `<img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30"><div><p class="font-semibold text-sm text-theme-light">${user.displayName}</p><p class="text-xs text-theme-light/70">${user.email}</p></div>`;
         }
 
-        // --- Data Fetching & Subscriptions ---
         function fetchInitialData() {
             if (!userId) return;
-
-            const collectionsToWatch = ['accounts', 'personalTransactions', 'homeTransactions'];
-            collectionsToWatch.forEach(coll => {
+            const collections = ['accounts', 'personalTransactions', 'homeTransactions'];
+            collections.forEach(coll => {
                  onSnapshot(collection(db, `users/${userId}/${coll}`), (snapshot) => {
                     appState[coll] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     if(appState.currentView) switchView(appState.currentView);
-                 }, (error) => {
-                    console.error(`Error fetching ${coll}: `, error);
-                    showToast(`Could not fetch ${coll}. Check Firestore rules.`, 'error');
-                 });
+                 }, (e) => { console.error(e); showToast(`Could not fetch ${coll}. Check Firestore rules.`, 'error'); });
             });
-
             onSnapshot(doc(db, `users/${userId}/appData/categories`), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().list) {
-                    appState.categories = docSnap.data().list;
-                } else {
-                    const defaultCategories = ["Food", "Transport", "Bills", "Shopping", "Health", "Entertainment", "Groceries", "Other"];
-                    setDoc(doc(db, `users/${userId}/appData/categories`), { list: defaultCategories });
-                    appState.categories = defaultCategories;
+                if (docSnap.exists() && docSnap.data().list) { appState.categories = docSnap.data().list; }
+                else {
+                    const defaults = ["Food", "Transport", "Bills", "Shopping", "Health", "Entertainment", "Groceries", "Other"];
+                    setDoc(doc(db, `users/${userId}/appData/categories`), { list: defaults });
+                    appState.categories = defaults;
                 }
             });
         }
         
-        // --- View Rendering ---
         window.switchView = (view) => {
             appState.currentView = view;
-            mainNav.querySelectorAll('.nav-button').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.view === view);
-            });
-            switch (view) {
-                case 'personal': renderPersonalView(); break;
-                case 'home': renderHomeView(); break;
-                case 'accounts': renderAccountsView(); break;
-            }
+            mainNav.querySelectorAll('.nav-button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+            const renderMap = { personal: renderPersonalView, home: renderHomeView, accounts: renderAccountsView };
+            if (renderMap[view]) renderMap[view]();
         }
         
         function renderPersonalView() {
-            const personalIncome = appState.personalTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-            const personalExpense = appState.personalTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-            const personalBalance = personalIncome - personalExpense;
-
+            const income = appState.personalTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expense = appState.personalTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
             viewContainer.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Balance</h3><p class="text-3xl font-bold text-theme-light mt-2">₹${personalBalance.toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${personalIncome.toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${personalExpense.toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div class="lg:col-span-3">
-                         <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold text-theme-light">Recent Transactions</h2>
-                            <button id="addPersonalTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2">
-                                <i data-lucide="plus-circle" class="w-5 h-5"></i> Add
-                            </button>
-                        </div>
+                         <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addPersonalTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div>
                         <div id="personalTxList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div>
                     </div>
-                    <div class="lg:col-span-2 glass-card p-6"><h3 class="text-lg font-semibold text-theme-light mb-4">Spending by Category</h3><canvas id="personalSpendingChart"></canvas></div>
-                </div>
-            `;
+                    <div class="lg:col-span-2 glass-card p-6"><h3 class="text-lg font-semibold mb-4">Spending by Category</h3><canvas id="personalSpendingChart"></canvas></div>
+                </div>`;
             renderTransactionList('personalTxList', appState.personalTransactions);
             createCategoryDoughnutChart('personalSpendingChart', appState.personalTransactions);
             lucide.createIcons();
@@ -389,29 +304,21 @@
         }
         
         function renderHomeView() {
-            const homeIncome = appState.homeTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-            const homeExpense = appState.homeTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-            const homeBalance = homeIncome - homeExpense;
-
+            const income = appState.homeTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expense = appState.homeTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
             viewContainer.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                     <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Home Balance</h3><p class="text-3xl font-bold text-theme-light mt-2">₹${homeBalance.toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Home Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${homeIncome.toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Home Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${homeExpense.toFixed(2)}</p></div>
+                     <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Home Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Home Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">Home Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div class="lg:col-span-3">
-                         <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold text-theme-light">Recent Transactions</h2>
-                            <button id="addHomeTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2">
-                                <i data-lucide="plus-circle" class="w-5 h-5"></i> Add
-                            </button>
-                        </div>
+                         <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addHomeTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div>
                         <div id="homeTxList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div>
                     </div>
-                    <div class="lg:col-span-2 glass-card p-6"><h3 class="text-lg font-semibold text-theme-light mb-4">Spending by Category</h3><canvas id="homeSpendingChart"></canvas></div>
-                </div>
-            `;
+                    <div class="lg:col-span-2 glass-card p-6"><h3 class="text-lg font-semibold mb-4">Spending by Category</h3><canvas id="homeSpendingChart"></canvas></div>
+                </div>`;
             renderTransactionList('homeTxList', appState.homeTransactions);
             createCategoryDoughnutChart('homeSpendingChart', appState.homeTransactions);
             lucide.createIcons();
@@ -428,31 +335,128 @@
             viewContainer.innerHTML = `
                 <div>
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-                        <h2 class="text-3xl font-bold text-theme-light">My Accounts & Settings</h2>
+                        <h2 class="text-3xl font-bold">My Accounts & Settings</h2>
                         <div class="flex items-center gap-4">
-                           <button onclick="openModal('manageCategoriesModal')" class="bg-theme-light/90 hover:bg-theme-light text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm">
-                               <i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories
-                           </button>
-                            <button id="addAccountBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm">
-                               <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account
-                            </button>
+                           <button onclick="openModal('manageCategoriesModal')" class="bg-theme-light/90 hover:bg-theme-light text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories</button>
+                           <button id="addAccountBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account</button>
                         </div>
                     </div>
-                    
                     <div id="accountsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                     <p id="noAccountsMessage" class="hidden text-center text-theme-light/70 py-8">No accounts found. Click "Add Account" to get started.</p>
-                </div>
-            `;
+                </div>`;
             renderAccountsList();
             lucide.createIcons();
-            document.getElementById('addAccountBtn').addEventListener('click', () => {
-                openModal('addAccountTypeModal');
-            });
+            document.getElementById('addAccountBtn').addEventListener('click', () => openModal('addAccountTypeModal'));
+        }
+        
+        function renderTransactionList(elId, txs) {
+            const listEl = document.getElementById(elId);
+            if (txs.length === 0) { listEl.innerHTML = `<div class="glass-card p-8 text-center text-theme-light/70">No transactions yet.</div>`; return; }
+            listEl.innerHTML = txs.map(tx => {
+                const isExpense = tx.type === 'expense';
+                const acc = appState.accounts.find(a => a.id === tx.accountId);
+                let accName = acc ? (acc.type === 'Bank' && acc.accountNumber ? `${acc.bankName} (...${acc.accountNumber.slice(-6)})` : acc.name) : 'Unknown';
+                return `<div class="glass-card p-4 flex items-center justify-between"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full flex items-center justify-center ${isExpense ? 'bg-red-500/10' : 'bg-green-500/10'}"><i data-lucide="${isExpense ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5 ${isExpense ? 'text-red-400' : 'text-green-400'}"></i></div><div><p class="font-semibold">${tx.description||tx.category}</p><p class="text-sm text-theme-light/70">${new Date(tx.date).toLocaleDateString()} &bull; ${accName}</p></div></div><p class="font-bold text-lg ${isExpense ? 'text-red-400' : 'text-green-400'}">${isExpense ? '-' : '+'}₹${tx.amount.toFixed(2)}</p></div>`;
+            }).join('');
+            lucide.createIcons();
         }
 
-        // --- ALL OTHER JS FUNCTIONS ARE HERE ---
+        function renderAccountsList() {
+            const listEl = document.getElementById('accountsList');
+            const msgEl = document.getElementById('noAccountsMessage');
+            if (appState.accounts.length === 0) { listEl.classList.add('hidden'); msgEl.classList.remove('hidden'); return; }
+            listEl.classList.remove('hidden'); msgEl.classList.add('hidden');
+            const icons = {'Bank':'landmark','Credit Card':'credit-card','Debit Card':'credit-card','Wallet':'wallet','UPI':'zap','Cash':'banknote'};
+            listEl.innerHTML = appState.accounts.map(acc => {
+                const accStr = JSON.stringify(acc).replace(/"/g, "'");
+                let detail = '', balance = '';
+                if (acc.type === 'Bank') detail = `<div class="text-xs text-theme-light/70 mt-1"><p>${acc.bankName||''}</p><p>${acc.accountNumber ? `******${acc.accountNumber.slice(-6)}` : ''}</p></div>`;
+                if (acc.linkedBank) detail += `<p class="text-xs text-theme-light/50 mt-2">Linked: <b>${acc.linkedBank}</b></p>`;
+                if (typeof acc.balance === 'number') balance = `<p class="text-3xl font-bold mt-4">₹${acc.balance.toFixed(2)}</p>`;
+                return `<div class="glass-card p-6 flex flex-col justify-between"><div><div class="flex justify-between items-start"><span class="text-sm text-theme-light/70">${acc.type}</span><div class="flex items-center gap-2"><button onclick="alert('Edit not implemented')" class="text-theme-light/70 hover:text-theme-light"><i data-lucide="pencil" class="w-4 h-4"></i></button><i data-lucide="${icons[acc.type]||'dollar-sign'}" class="w-5 h-5 text-theme-light/70"></i></div></div><p class="text-xl font-semibold mt-1">${acc.name}</p>${detail}</div>${balance}</div>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function createCategoryDoughnutChart(id, txs) {
+            const canvas = document.getElementById(id); if (!canvas) return;
+            const data = txs.filter(t => t.type === 'expense').reduce((acc, t) => { acc[t.category] = (acc[t.category] || 0) + t.amount; return acc; }, {});
+            if (charts[id]) charts[id].destroy();
+            const noDataEl = canvas.parentNode.querySelector('.no-data-msg'); if (noDataEl) noDataEl.remove();
+            if (Object.keys(data).length === 0) {
+                canvas.style.display = 'none';
+                canvas.insertAdjacentHTML('afterend', `<div class="no-data-msg text-center text-theme-light/70 py-10">No expense data.</div>`); return;
+            }
+            canvas.style.display = 'block';
+            charts[id] = new Chart(canvas.getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: ['#fbf8BE', '#A6A473', '#D9D7A0', '#73725A', '#595842'], borderColor: '#234E70', borderWidth: 2 }] },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#fbf8BE' } } } }
+            });
+        }
         
-        // --- Initialize App ---
+        window.openModal = (id) => { const el = document.getElementById(id); el.style.display = 'flex'; setTimeout(() => el.querySelector('.glass-card').style.opacity = '1', 50); lucide.createIcons(); };
+        window.closeModal = (id) => { const el = document.getElementById(id); el.querySelector('.glass-card').style.opacity = '0'; setTimeout(() => el.style.display = 'none', 300); };
+        
+        window.selectAccountType = (type) => {
+            if (['Credit Card', 'Debit Card', 'Wallet', 'UPI'].includes(type) && !appState.accounts.some(a => a.type === 'Bank')) {
+                showToast("Please add a bank account first.", "warning"); return;
+            }
+            closeModal('addAccountTypeModal');
+            setTimeout(() => alert(`${type} form not implemented`), 200);
+        };
+        
+        const txFormHandler = async (e, type) => {
+            e.preventDefault();
+            loadingIndicator.style.display = 'flex';
+            const form = e.target;
+            const data = {
+                date: form.querySelector('[id*="TxDate"]').value,
+                type: form.querySelector('[id*="TxType"]').value,
+                accountId: form.querySelector('[id*="TxAccount"]').value,
+                category: form.querySelector('[id*="TxCategory"]').value,
+                amount: parseFloat(form.querySelector('[id*="TxAmount"]').value),
+                description: form.querySelector('[id*="TxDescription"]').value,
+                createdAt: serverTimestamp()
+            };
+
+            const accountRef = doc(db, `users/${userId}/accounts`, data.accountId);
+            const balUpdate = data.type === 'income' ? data.amount : -data.amount;
+
+            try {
+                const batch = writeBatch(db);
+                const txCollection = collection(db, `users/${userId}/${type}Transactions`);
+                batch.set(doc(txCollection), data);
+                batch.update(accountRef, { balance: increment(balUpdate) });
+                await batch.commit();
+                showToast("Transaction saved!", "success");
+                closeModal(`add${type.charAt(0).toUpperCase() + type.slice(1)}TransactionModal`);
+            } catch (err) { console.error(err); showToast("Failed to save transaction.", "error"); }
+            finally { loadingIndicator.style.display = 'none'; }
+        };
+        
+        document.getElementById('addPersonalTransactionForm').addEventListener('submit', (e) => txFormHandler(e, 'personal'));
+        document.getElementById('addHomeTransactionForm').addEventListener('submit', (e) => txFormHandler(e, 'home'));
+
+        function populateAllAccountsDropdown(elId) {
+            const sel = document.getElementById(elId);
+            sel.innerHTML = '<option value="">Select Account</option>' + appState.accounts.filter(a => typeof a.balance === 'number').map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+        }
+        function populateCategoriesDropdown(elId) {
+            const sel = document.getElementById(elId);
+            sel.innerHTML = '<option value="">Select Category</option>' + appState.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+        
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const colors = { success: 'bg-green-600', error: 'bg-red-600', warning: 'bg-yellow-600 text-theme-dark' };
+            const toast = document.createElement('div');
+            toast.className = `toast text-white p-4 rounded-lg shadow-lg mb-2 ${colors[type]}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
         initialize();
         lucide.createIcons();
     </script>
