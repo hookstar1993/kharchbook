@@ -234,7 +234,7 @@
         
         const txFormHandler = async (e, type) => {
             e.preventDefault(); loadingIndicator.style.display = 'flex';
-            const form = e.target, data = { date: form.querySelector('[id*="Date"]').value, type: form.querySelector('[id*="Type"]').value, accountId: form.querySelector('[id*="Account"]').value, category: form.querySelector('[id*="Category"]').value, amount: parseFloat(form.querySelector('[id*="Amount"]').value), description: form.querySelector('[id*="Description"]').value, createdAt: serverTimestamp() };
+            const form = e.target, data = { date: form.querySelector('[id*="Date"]').value, type: form.querySelector('[id*="Type"]').value, accountId: form.querySelector('[id*="Account"]').value, category: form.querySelector('[id*="Category"]').value, amount: parseFloat(form.querySelector('[id*="Amount"]').value), description: form.querySelector('[id*="Description"]').value, createdAt: new Date().toISOString() };
             try {
                 const batch = writeBatch(db);
                 batch.set(doc(collection(db, `users/${userId}/${type}Transactions`)), data);
@@ -252,7 +252,7 @@
             e.preventDefault(); loadingIndicator.style.display = 'flex';
             const form = e.target, data = { type };
             new FormData(form).forEach((val, key) => data[key] = isNaN(val) || val === '' ? val : parseFloat(val));
-            data.createdAt = serverTimestamp();
+            data.createdAt = new Date().toISOString();
             try {
                 await addDoc(collection(db, `users/${userId}/accounts`), data);
                 showToast("Account added!", "success");
@@ -309,3 +309,4 @@
     </script>
 </body>
 </html>
+
