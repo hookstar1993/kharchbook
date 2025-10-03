@@ -72,12 +72,8 @@
 
     <!-- Main App View (Initially Hidden) -->
     <div id="app" class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 hidden">
-
-        <!-- Header -->
         <header class="flex justify-between items-center mb-8">
-            <div id="userProfile" class="flex items-center gap-3">
-                <!-- User profile info will be injected here -->
-            </div>
+            <div id="userProfile" class="flex items-center gap-3"></div>
             <nav class="glass-card p-2 rounded-full">
                 <div id="mainNav" class="flex items-center gap-2">
                     <button onclick="switchView('personal')" data-view="personal" class="nav-button py-2 px-6 rounded-full text-sm font-semibold text-theme-light/80">Personal</button>
@@ -85,97 +81,23 @@
                     <button onclick="switchView('accounts')" data-view="accounts" class="nav-button py-2 px-6 rounded-full text-sm font-semibold text-theme-light/80">Accounts</button>
                 </div>
             </nav>
-             <button id="signOutBtn" class="text-theme-light/70 hover:text-theme-light transition-all">
-                <i data-lucide="log-out" class="w-6 h-6"></i>
-             </button>
+             <button id="signOutBtn" class="text-theme-light/70 hover:text-theme-light transition-all"><i data-lucide="log-out" class="w-6 h-6"></i></button>
         </header>
-
-        <main id="viewContainer">
-            <!-- App views will be dynamically rendered here -->
-        </main>
+        <main id="viewContainer"></main>
     </div>
     
-    <!-- All Modals are here -->
+    <!-- ALL MODALS -->
+    <div id="addPersonalTransactionModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addPersonalTransactionModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addPersonalTransactionModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><h2 class="text-2xl font-bold text-theme-light mb-6">Add Personal Transaction</h2><form id="addPersonalTransactionForm" class="space-y-4"><div><label for="personalTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label><input type="date" id="personalTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label for="personalTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label><select id="personalTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required><option value="expense">Expense</option><option value="income">Income</option></select></div><div><label for="personalTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label><select id="personalTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label for="personalTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label><select id="personalTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><div><label for="personalTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label><input type="number" id="personalTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div></div><div><label for="personalTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label><input type="text" id="personalTxDescription" placeholder="e.g., Lunch" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><button type="submit" class="w-full p-4 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90">Save</button></form></div></div>
+    <div id="addHomeTransactionModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addHomeTransactionModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addHomeTransactionModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><h2 class="text-2xl font-bold text-theme-light mb-6">Add Home Transaction</h2><form id="addHomeTransactionForm" class="space-y-4"><div><label for="homeTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label><input type="date" id="homeTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label for="homeTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label><select id="homeTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required><option value="expense">Expense</option><option value="income">Income</option></select></div><div><label for="homeTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label><select id="homeTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label for="homeTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label><select id="homeTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><div><label for="homeTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label><input type="number" id="homeTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div></div><div><label for="homeTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label><input type="text" id="homeTxDescription" placeholder="e.g., Groceries" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><button type="submit" class="w-full p-4 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90">Save</button></form></div></div>
+    <div id="addAccountTypeModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addAccountTypeModal')"></div><div class="glass-card w-full max-w-2xl m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addAccountTypeModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><h2 class="text-2xl font-bold text-center mb-6">Select Account Type</h2><div class="grid grid-cols-2 md:grid-cols-3 gap-4"><button onclick="selectAccountType('Bank')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="landmark" class="w-8 h-8"></i><span>Bank</span></button><button onclick="selectAccountType('Credit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="credit-card" class="w-8 h-8"></i><span>Credit Card</span></button><button onclick="selectAccountType('Debit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="credit-card" class="w-8 h-8"></i><span>Debit Card</span></button><button onclick="selectAccountType('Wallet')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="wallet" class="w-8 h-8"></i><span>Wallet</span></button><button onclick="selectAccountType('UPI')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="zap" class="w-8 h-8"></i><span>UPI</span></button><button onclick="selectAccountType('Cash')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="banknote" class="w-8 h-8"></i><span>Cash</span></button></div></div></div>
+    <div id="manageCategoriesModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('manageCategoriesModal')"></div><div class="glass-card w-full max-w-md m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('manageCategoriesModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><h2 class="text-2xl font-bold mb-6">Manage Categories</h2><form id="addCategoryForm" class="flex gap-2 mb-4"><input type="text" id="newCategoryName" placeholder="New category name" class="flex-grow p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required><button type="submit" class="p-3 bg-theme-light text-theme-dark rounded-lg hover:bg-theme-light/90"><i data-lucide="plus" class="w-6 h-6"></i></button></form><div id="categoryList" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div>
+    <div id="addBankAccountModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addBankAccountModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addBankAccountModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><form id="addBankAccountForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Bank Account</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Account Nickname</label><input type="text" name="name" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Initial Balance</label><input type="number" name="balance" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Bank Name</label><input type="text" name="bankName" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10"></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save</button></form></div></div>
+    <div id="addCreditCardModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addCreditCardModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addCreditCardModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><form id="addCreditCardForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Credit Card</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Card Nickname</label><input type="text" name="name" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Bank Name</label><input type="text" name="bankName" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank</label><select name="linkedBank" id="creditCardLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save</button></form></div></div>
+    <div id="addDebitCardModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addDebitCardModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addDebitCardModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><form id="addDebitCardForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Debit Card</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Card Nickname</label><input type="text" name="name" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Bank Name</label><input type="text" name="bankName" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank</label><select name="linkedBank" id="debitCardLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save</button></form></div></div>
+    <div id="addWalletModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addWalletModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addWalletModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><form id="addWalletForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Wallet</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Wallet Name</label><input type="text" name="name" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Balance</label><input type="number" name="balance" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank</label><select name="linkedBank" id="walletLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save</button></form></div></div>
+    <div id="addUpiModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addUpiModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addUpiModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><form id="addUpiForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add UPI</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">App Name</label><input type="text" name="name" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank</label><select name="linkedBank" id="upiLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save</button></form></div></div>
+    <div id="addCashModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addCashModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity:0;transform:scale(.95)"><button onclick="closeModal('addCashModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button><form id="addCashForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Cash</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Nickname</label><input type="text" name="name" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Balance</label><input type="number" name="balance" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save</button></form></div></div>
     
-    <div id="addPersonalTransactionModal" class="fixed inset-0 z-50 items-center justify-center hidden">
-        <div class="modal-backdrop absolute inset-0" onclick="closeModal('addPersonalTransactionModal')"></div>
-        <div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
-            <button onclick="closeModal('addPersonalTransactionModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h2 class="text-2xl font-bold text-theme-light mb-6">Add Personal Transaction</h2>
-            <form id="addPersonalTransactionForm" class="space-y-4">
-                <div><label for="personalTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label><input type="date" id="personalTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div><label for="personalTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label><select id="personalTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required><option value="expense">Expense</option><option value="income">Income</option></select></div>
-                    <div><label for="personalTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label><select id="personalTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div><label for="personalTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label><select id="personalTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
-                     <div><label for="personalTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label><input type="number" id="personalTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
-                </div>
-                <div><label for="personalTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label><input type="text" id="personalTxDescription" placeholder="e.g., Lunch with friends" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
-                <button type="submit" class="w-full p-4 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90 transition-all">Save Transaction</button>
-            </form>
-        </div>
-    </div>
-    
-     <div id="addHomeTransactionModal" class="fixed inset-0 z-50 items-center justify-center hidden">
-        <div class="modal-backdrop absolute inset-0" onclick="closeModal('addHomeTransactionModal')"></div>
-        <div class="glass-card w-full max-w-lg m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
-            <button onclick="closeModal('addHomeTransactionModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h2 class="text-2xl font-bold text-theme-light mb-6">Add Home Transaction</h2>
-            <form id="addHomeTransactionForm" class="space-y-4">
-                <div><label for="homeTxDate" class="block text-xs font-medium text-theme-light/70 mb-1">Date</label><input type="date" id="homeTxDate" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div><label for="homeTxType" class="block text-xs font-medium text-theme-light/70 mb-1">Type</label><select id="homeTxType" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required><option value="expense">Expense</option><option value="income">Income</option></select></div>
-                    <div><label for="homeTxAccount" class="block text-xs font-medium text-theme-light/70 mb-1">Account</label><select id="homeTxAccount" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div><label for="homeTxCategory" class="block text-xs font-medium text-theme-light/70 mb-1">Category</label><select id="homeTxCategory" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></select></div>
-                     <div><label for="homeTxAmount" class="block text-xs font-medium text-theme-light/70 mb-1">Amount</label><input type="number" id="homeTxAmount" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
-                </div>
-                <div><label for="homeTxDescription" class="block text-xs font-medium text-theme-light/70 mb-1">Description</label><input type="text" id="homeTxDescription" placeholder="e.g., Monthly groceries" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required></div>
-                <button type="submit" class="w-full p-4 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90 transition-all">Save Transaction</button>
-            </form>
-        </div>
-    </div>
-    
-    <div id="addAccountTypeModal" class="fixed inset-0 z-50 items-center justify-center hidden">
-        <div class="modal-backdrop absolute inset-0" onclick="closeModal('addAccountTypeModal')"></div>
-        <div class="glass-card w-full max-w-2xl m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
-            <button onclick="closeModal('addAccountTypeModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h2 class="text-2xl font-bold text-theme-light mb-6 text-center">Select Account Type</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <button onclick="selectAccountType('Bank')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="landmark" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Bank</span></button>
-                <button onclick="selectAccountType('Credit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="credit-card" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Credit Card</span></button>
-                 <button onclick="selectAccountType('Debit Card')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="credit-card" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Debit Card</span></button>
-                <button onclick="selectAccountType('Wallet')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="wallet" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Wallet</span></button>
-                <button onclick="selectAccountType('UPI')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="zap" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">UPI</span></button>
-                 <button onclick="selectAccountType('Cash')" class="account-type-card glass-card p-6 flex flex-col items-center justify-center gap-2 rounded-lg"><i data-lucide="banknote" class="w-8 h-8 text-theme-light"></i><span class="font-semibold text-theme-light">Cash</span></button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="manageCategoriesModal" class="fixed inset-0 z-50 items-center justify-center hidden">
-        <div class="modal-backdrop absolute inset-0" onclick="closeModal('manageCategoriesModal')"></div>
-        <div class="glass-card w-full max-w-md m-4 p-8 relative transform transition-all" style="opacity: 0; transform: scale(0.95);">
-            <button onclick="closeModal('manageCategoriesModal')" class="absolute top-4 right-4 text-theme-light/70 hover:text-theme-light"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h2 class="text-2xl font-bold text-theme-light mb-6">Manage Categories</h2>
-            <form id="addCategoryForm" class="flex gap-2 mb-4">
-                <input type="text" id="newCategoryName" placeholder="New category name" class="flex-grow p-3 bg-theme-light/5 rounded-lg border border-theme-light/10 focus:outline-none focus:ring-2 focus:ring-theme-light text-theme-light" required>
-                <button type="submit" class="p-3 bg-theme-light text-theme-dark font-bold rounded-lg hover:bg-theme-light/90 transition-all"><i data-lucide="plus" class="w-6 h-6"></i></button>
-            </form>
-            <div id="categoryList" class="space-y-2 max-h-60 overflow-y-auto"></div>
-        </div>
-    </div>
-
-    <!-- Add Account Modals -->
-    <div id="addBankAccountModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addBankAccountModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative"><form id="addBankAccountForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Bank Account</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Account Nickname</label><input type="text" name="name" placeholder="e.g., My Savings" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Initial Balance</label><input type="number" name="balance" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Bank Name</label><input type="text" name="bankName" placeholder="e.g., State Bank of India" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10"></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save Account</button></form></div></div>
-    <div id="addCreditCardModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addCreditCardModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative"><form id="addCreditCardForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Credit Card</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Card Nickname</label><input type="text" name="name" placeholder="e.g., HDFC Millennia" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Bank Name</label><input type="text" name="bankName" placeholder="e.g., HDFC Bank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank Account</label><select name="linkedBank" id="creditCardLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save Card</button></form></div></div>
-    <div id="addDebitCardModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addDebitCardModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative"><form id="addDebitCardForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Debit Card</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Card Nickname</label><input type="text" name="name" placeholder="e.g., SBI Global" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Bank Name</label><input type="text" name="bankName" placeholder="e.g., State Bank of India" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank Account</label><select name="linkedBank" id="debitCardLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save Card</button></form></div></div>
-    <div id="addWalletModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addWalletModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative"><form id="addWalletForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Wallet</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Wallet Name</label><input type="text" name="name" placeholder="e.g., Paytm" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Initial Balance</label><input type="number" name="balance" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank Account</label><select name="linkedBank" id="walletLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save Wallet</button></form></div></div>
-    <div id="addUpiModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addUpiModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative"><form id="addUpiForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add UPI</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">App Name</label><input type="text" name="name" placeholder="e.g., Google Pay" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Linked Bank Account</label><select name="linkedBank" id="upiLinkedBank" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></select></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save UPI</button></form></div></div>
-    <div id="addCashModal" class="fixed inset-0 z-50 items-center justify-center hidden"><div class="modal-backdrop absolute inset-0" onclick="closeModal('addCashModal')"></div><div class="glass-card w-full max-w-lg m-4 p-8 relative"><form id="addCashForm" class="space-y-4"><h2 class="text-2xl font-bold mb-6">Add Cash</h2><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Account Nickname</label><input type="text" name="name" placeholder="e.g., Cash in Hand" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><div><label class="block text-xs font-medium text-theme-light/70 mb-1">Initial Balance</label><input type="number" name="balance" placeholder="0.00" step="0.01" class="w-full p-3 bg-theme-light/5 rounded-lg border border-theme-light/10" required></div><button type="submit" class="w-full p-4 mt-4 bg-theme-light text-theme-dark font-bold rounded-lg">Save Cash</button></form></div></div>
-
     <div id="loadingIndicator" class="fixed inset-0 z-[101] items-center justify-center hidden bg-black/50"><div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-theme-light"></div></div>
     <div id="toastContainer" class="fixed top-5 right-5 z-[100]"></div>
 
@@ -194,17 +116,8 @@
             measurementId: "G-HQ4FWR8RKH"
         };
 
-        let db, auth, userId;
-        let appState = { accounts: [], personalTransactions: [], homeTransactions: [], categories: [], currentView: 'personal' };
-        let charts = {};
-
-        const loginView = document.getElementById('loginView');
-        const appView = document.getElementById('app');
-        const viewContainer = document.getElementById('viewContainer');
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        const mainNav = document.getElementById('mainNav');
-        const signInBtn = document.getElementById('signInBtn');
-        const signOutBtn = document.getElementById('signOutBtn');
+        let db, auth, userId, appState = { accounts: [], personalTransactions: [], homeTransactions: [], categories: [], currentView: 'personal' }, charts = {};
+        const loginView = document.getElementById('loginView'), appView = document.getElementById('app'), viewContainer = document.getElementById('viewContainer'), loadingIndicator = document.getElementById('loadingIndicator'), mainNav = document.getElementById('mainNav'), signInBtn = document.getElementById('signInBtn'), signOutBtn = document.getElementById('signOutBtn');
 
         function initialize() {
             try {
@@ -230,32 +143,19 @@
             } catch (err) { console.error("Firebase init error: ", err); showToast("Error connecting to Firebase.", "error"); }
         }
 
-        signInBtn.addEventListener('click', async () => {
-            try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-            catch (error) { console.error(error); showToast("Failed to sign in.", "error"); }
-        });
-
+        signInBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (error) { console.error(error); showToast("Failed to sign in.", "error"); } });
         signOutBtn.addEventListener('click', () => signOut(auth));
 
-        function displayUserProfile(user) {
-            document.getElementById('userProfile').innerHTML = `<img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30"><div><p class="font-semibold text-sm">${user.displayName}</p><p class="text-xs text-theme-light/70">${user.email}</p></div>`;
-        }
+        function displayUserProfile(user) { document.getElementById('userProfile').innerHTML = `<img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30"><div><p class="font-semibold text-sm">${user.displayName}</p><p class="text-xs text-theme-light/70">${user.email}</p></div>`; }
 
         function fetchInitialData() {
             if (!userId) return;
             ['accounts', 'personalTransactions', 'homeTransactions'].forEach(coll => {
-                 onSnapshot(collection(db, `users/${userId}/${coll}`), (snapshot) => {
-                    appState[coll] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    if(appState.currentView) switchView(appState.currentView);
-                 }, (e) => { console.error(e); showToast(`Could not fetch ${coll}. Check Firestore rules.`, 'error'); });
+                 onSnapshot(collection(db, `users/${userId}/${coll}`), s => { appState[coll] = s.docs.map(d => ({ id: d.id, ...d.data() })); if(appState.currentView) switchView(appState.currentView); }, e => showToast(`Could not fetch ${coll}.`, 'error'));
             });
             onSnapshot(doc(db, `users/${userId}/appData/categories`), (docSnap) => {
                 if (docSnap.exists() && docSnap.data().list) { appState.categories = docSnap.data().list; }
-                else {
-                    const defaults = ["Food", "Transport", "Bills", "Shopping", "Health", "Entertainment", "Other"];
-                    setDoc(doc(db, `users/${userId}/appData/categories`), { list: defaults });
-                    appState.categories = defaults;
-                }
+                else { const d = ["Food","Transport","Bills","Shopping","Health","Other"]; setDoc(doc(db, `users/${userId}/appData/categories`),{list:d}); appState.categories=d; }
             });
         }
         
@@ -267,35 +167,19 @@
         };
         
         const renderSummaryAndChart = (view, txs) => {
-            const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-            const expense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-            viewContainer.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                    <div class="lg:col-span-3">
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div>
-                        <div id="txList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div>
-                    </div>
-                    <div class="lg:col-span-2 glass-card p-6"><h3 class="text-lg font-semibold mb-4">Spending by Category</h3><canvas id="spendingChart"></canvas></div>
-                </div>`;
-            renderTransactionList('txList', txs);
-            createCategoryDoughnutChart('spendingChart', txs);
+            const income = txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0), expense = txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+            viewContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"><div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div><div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div><div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div></div><div class="grid grid-cols-1 lg:grid-cols-5 gap-6"><div class="lg:col-span-3"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div><div id="txList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div></div><div class="lg:col-span-2 glass-card p-6"><h3 class="text-lg font-semibold mb-4">Spending by Category</h3><canvas id="spendingChart"></canvas></div></div>`;
+            renderTransactionList('txList', txs); createCategoryDoughnutChart('spendingChart', txs);
         };
 
         const renderPersonalView = () => renderSummaryAndChart('Personal', appState.personalTransactions);
         const renderHomeView = () => renderSummaryAndChart('Home', appState.homeTransactions);
 
         document.addEventListener('click', (e) => {
-            if (e.target && e.target.id === 'addTxBtn') {
+            if (e.target.id === 'addTxBtn') {
                 const type = appState.currentView.charAt(0).toUpperCase() + appState.currentView.slice(1);
-                const formId = `add${type}TransactionForm`;
-                const form = document.getElementById(formId);
-                form.reset();
-                form.querySelector('[id*="Date"]').valueAsDate = new Date();
+                const formId = `add${type}TransactionForm`, form = document.getElementById(formId);
+                form.reset(); form.querySelector('[id*="Date"]').valueAsDate = new Date();
                 populateAllAccountsDropdown(`${appState.currentView}TxAccount`);
                 populateCategoriesDropdown(`${appState.currentView}TxCategory`);
                 openModal(`add${type}TransactionModal`);
@@ -303,33 +187,15 @@
         });
 
         function renderAccountsView() {
-            viewContainer.innerHTML = `
-                <div>
-                    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-                        <h2 class="text-3xl font-bold">My Accounts & Settings</h2>
-                        <div class="flex items-center gap-4">
-                           <button onclick="openModal('manageCategoriesModal')" class="bg-theme-light/90 hover:bg-theme-light text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories</button>
-                           <button id="addAccountBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account</button>
-                        </div>
-                    </div>
-                    <div id="accountsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-                    <p id="noAccountsMessage" class="hidden text-center text-theme-light/70 py-8">No accounts found. Click "Add Account" to get started.</p>
-                </div>`;
-            renderAccountsList();
-            lucide.createIcons();
+            viewContainer.innerHTML = `<div class="flex flex-wrap justify-between items-center gap-4 mb-6"><h2 class="text-3xl font-bold">My Accounts & Settings</h2><div class="flex items-center gap-4"><button onclick="openModal('manageCategoriesModal')" class="bg-theme-light/90 hover:bg-theme-light text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories</button><button id="addAccountBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account</button></div></div><div id="accountsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div><p id="noAccountsMessage" class="hidden text-center text-theme-light/70 py-8">No accounts found.</p>`;
+            renderAccountsList(); lucide.createIcons();
             document.getElementById('addAccountBtn').addEventListener('click', () => openModal('addAccountTypeModal'));
             renderCategoryList();
         }
         
         function renderTransactionList(elId, txs) {
-            const el = document.getElementById(elId);
-            if (!el) return;
-            if (txs.length === 0) { el.innerHTML = `<div class="glass-card p-8 text-center text-theme-light/70">No transactions yet.</div>`; return; }
-            el.innerHTML = txs.map(tx => {
-                const isExpense = tx.type === 'expense';
-                const acc = appState.accounts.find(a => a.id === tx.accountId);
-                return `<div class="glass-card p-4 flex items-center justify-between"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full flex items-center justify-center ${isExpense ? 'bg-red-500/10' : 'bg-green-500/10'}"><i data-lucide="${isExpense ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5 ${isExpense ? 'text-red-400' : 'text-green-400'}"></i></div><div><p class="font-semibold">${tx.description||tx.category}</p><p class="text-sm text-theme-light/70">${new Date(tx.date).toLocaleDateString()} &bull; ${acc ? acc.name : 'Unknown'}</p></div></div><p class="font-bold text-lg ${isExpense ? 'text-red-400' : 'text-green-400'}">${isExpense ? '-' : '+'}₹${tx.amount.toFixed(2)}</p></div>`;
-            }).join('');
+            const el = document.getElementById(elId); if (!el) return;
+            el.innerHTML = txs.length === 0 ? `<div class="glass-card p-8 text-center text-theme-light/70">No transactions yet.</div>` : txs.map(tx => { const isExpense = tx.type === 'expense', acc = appState.accounts.find(a => a.id === tx.accountId); return `<div class="glass-card p-4 flex items-center justify-between"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-full flex items-center justify-center ${isExpense ? 'bg-red-500/10' : 'bg-green-500/10'}"><i data-lucide="${isExpense ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5 ${isExpense ? 'text-red-400' : 'text-green-400'}"></i></div><div><p class="font-semibold">${tx.description||tx.category}</p><p class="text-sm text-theme-light/70">${new Date(tx.date).toLocaleDateString()} &bull; ${acc ? acc.name : 'Unknown'}</p></div></div><p class="font-bold text-lg ${isExpense ? 'text-red-400' : 'text-green-400'}">${isExpense ? '-' : '+'}₹${tx.amount.toFixed(2)}</p></div>`; }).join('');
             lucide.createIcons();
         }
 
@@ -356,7 +222,7 @@
         window.closeModal = (id) => { const el=document.getElementById(id); el.querySelector('.glass-card').style.opacity='0'; setTimeout(()=>el.style.display='none', 300); };
         
         window.selectAccountType = (type) => {
-            if (['Credit Card', 'Debit Card', 'Wallet', 'UPI'].includes(type) && !appState.accounts.some(a=>a.type==='Bank')) { showToast("Please add a bank account first.", "warning"); return; }
+            if (['Credit Card', 'Debit Card', 'Wallet', 'UPI'].includes(type) && !appState.accounts.some(a=>a.type==='Bank')) { showToast("Add a bank account first.", "warning"); return; }
             closeModal('addAccountTypeModal');
             setTimeout(() => {
                 const modalId = `add${type.replace(' ','')}Modal`;
@@ -395,7 +261,8 @@
             finally { loadingIndicator.style.display = 'none'; }
         };
         ['Bank', 'Credit Card', 'Debit Card', 'Wallet', 'UPI', 'Cash'].forEach(type => {
-            const form = document.getElementById(`add${type.replace(' ','')}Form`);
+            const formId = `add${type.replace(' ','')}Form`;
+            const form = document.getElementById(formId);
             if (form) form.addEventListener('submit', (e) => accountFormHandler(e, type));
         });
 
@@ -410,28 +277,27 @@
         });
 
         function renderCategoryList() {
-            const listEl = document.getElementById('categoryList');
-            if (!listEl) return;
+            const listEl = document.getElementById('categoryList'); if (!listEl) return;
             listEl.innerHTML = appState.categories.map(cat => `<div class="flex justify-between items-center bg-theme-light/5 p-2 rounded-lg"><span>${cat}</span><button class="text-red-400 hover:text-red-300"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('');
             lucide.createIcons();
         }
 
-        function populateAllAccountsDropdown(elId) {
-            const sel = document.getElementById(elId); if(!sel) return;
+        function populateAllAccountsDropdown(id) {
+            const sel = document.getElementById(id); if(!sel) return;
             sel.innerHTML = '<option value="">Select Account</option>' + appState.accounts.filter(a => typeof a.balance === 'number').map(a => `<option value="${a.id}">${a.name}</option>`).join('');
         }
-        function populateBankAccountsDropdown(elId) {
-            const sel = document.getElementById(elId); if(!sel) return;
+        function populateBankAccountsDropdown(id) {
+            const sel = document.getElementById(id); if(!sel) return;
             sel.innerHTML = '<option value="">Select Bank</option>' + appState.accounts.filter(a => a.type === 'Bank').map(a => `<option value="${a.name}">${a.name}</option>`).join('');
         }
-        function populateCategoriesDropdown(elId) {
-            const sel = document.getElementById(elId); if(!sel) return;
+        function populateCategoriesDropdown(id) {
+            const sel = document.getElementById(id); if(!sel) return;
             sel.innerHTML = '<option value="">Select Category</option>' + appState.categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
         
         function showToast(message, type = 'success') {
             const cont = document.getElementById('toastContainer');
-            const colors = { success: 'bg-green-600', error: 'bg-red-600', warning: 'bg-yellow-600 text-theme-dark' };
+            const colors = { success: 'bg-green-600', error: 'bg-red-600', warning: 'bg-yellow-500 text-theme-dark' };
             const toast = document.createElement('div');
             toast.className = `toast text-white p-4 rounded-lg shadow-lg mb-2 ${colors[type]}`;
             toast.textContent = message;
