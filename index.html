@@ -108,7 +108,7 @@
                     <button id="profileDropdownBtn" class="flex items-center gap-3 cursor-pointer">
                         <!-- User profile image will be injected here -->
                     </button>
-                    <div id="profileDropdownMenu" class="absolute right-0 mt-3 w-60 glass-card rounded-xl shadow-lg z-50 hidden transition-opacity duration-300" style="padding: 0.5rem;">
+                    <div id="profileDropdownMenu" class="absolute right-0 mt-3 w-64 glass-card rounded-xl shadow-lg z-50 hidden transition-opacity duration-300" style="padding: 0.5rem;">
                         <div id="userProfileInfo" class="p-2 border-b border-theme-light/10 mb-2 flex items-center gap-3">
                             <!-- User full info will be injected here -->
                         </div>
@@ -244,9 +244,9 @@
             profileDropdownBtn.innerHTML = `<img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30">`;
             userProfileInfo.innerHTML = `
                 <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
-                <div>
-                    <p class="font-semibold text-sm truncate">${user.displayName}</p>
-                    <p class="text-xs text-theme-light/70 truncate">${user.email}</p>
+                <div class="overflow-hidden">
+                    <p class="font-semibold text-sm">${user.displayName}</p>
+                    <p class="text-xs text-theme-light/70">${user.email}</p>
                 </div>
             `;
         }
@@ -781,4 +781,5 @@
     </script>
 </body>
 </html>
+
 
