@@ -116,7 +116,7 @@
                             <a href="#" onclick="openModal('addAccountTypeModal'); document.getElementById('profileDropdownMenu').classList.add('hidden');" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-theme-light/80 hover:bg-theme-light/10 rounded-md">
                                 <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account
                             </a>
-                            <a href="#" onclick="openModal('manageCategoriesModal'); document.getElementById('profileDropdownMenu').classList.add('hidden');" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-theme-light/80 hover:bg-theme-light/10 rounded-md">
+                            <a href="#" onclick="openModal('manageCategoriesModal'); renderCategoryList(); document.getElementById('profileDropdownMenu').classList.add('hidden');" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-theme-light/80 hover:bg-theme-light/10 rounded-md">
                                <i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories
                             </a>
                             <div class="border-t border-theme-light/10 !mt-2 pt-2">
@@ -824,4 +824,5 @@
     </script>
 </body>
 </html>
+
 
