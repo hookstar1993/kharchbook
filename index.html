@@ -170,7 +170,17 @@
              measurementId: "G-HQ4FWR8RKH"
         };
 
-        let db, auth, userId, appState = { accounts: [], personalTransactions: [], homeTransactions: [], categories: [], currentView: 'personal' }, charts = {};
+        const getCurrentMonthYYYYMM = () => new Date().toISOString().slice(0, 7);
+
+        let db, auth, userId, appState = { 
+            accounts: [], 
+            personalTransactions: [], 
+            homeTransactions: [], 
+            categories: [], 
+            currentView: 'personal',
+            selectedMonth: getCurrentMonthYYYYMM() 
+        }, charts = {};
+
         const loginView = document.getElementById('loginView'), appView = document.getElementById('app'), viewContainer = document.getElementById('viewContainer'), loadingIndicator = document.getElementById('loadingIndicator'), mainNav = document.getElementById('mainNav'), signInBtn = document.getElementById('signInBtn');
 
         function initialize() {
@@ -211,12 +221,10 @@
             });
             
             document.addEventListener('click', (e) => {
-                // Close dropdown if clicked outside
                 if (profileDropdownBtn && !profileDropdownBtn.contains(e.target) && profileDropdownMenu && !profileDropdownMenu.contains(e.target)) {
                     profileDropdownMenu.classList.add('hidden');
                 }
                 
-                // Dropdown menu actions
                 const manageAccountsBtn = e.target.closest('#manageAccountsBtn');
                 if (manageAccountsBtn) {
                     e.preventDefault();
@@ -229,7 +237,6 @@
                     signOut(auth);
                 }
 
-                // Add Transaction Button Logic
                 const addTxBtn = e.target.closest('#addTxBtn');
                 if (addTxBtn) {
                     const type = appState.currentView.charAt(0).toUpperCase() + appState.currentView.slice(1);
@@ -238,7 +245,6 @@
                     const form = document.getElementById(formId);
 
                     if (form) {
-                        // Ensure form is reset to "Add" mode, clearing any "Edit" data
                         resetForm(form); 
                         form.querySelector('[id*="Date"]').valueAsDate = new Date();
                         populateAllAccountsDropdown(form.querySelector('[id*="Account"]').id);
@@ -279,7 +285,12 @@
                 }, e => showToast(`Could not fetch ${coll}.`, 'error'));
             });
             onSnapshot(doc(db, `users/${userId}/appData/categories`), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().list) { appState.categories = docSnap.data().list; }
+                if (docSnap.exists() && docSnap.data().list) { 
+                    appState.categories = docSnap.data().list; 
+                    if (document.getElementById('manageCategoriesModal').style.display === 'flex') {
+                        renderCategoryList();
+                    }
+                }
                 else { const d = ["Food","Transport","Bills","Shopping","Health","Other"]; setDoc(doc(db, `users/${userId}/appData/categories`),{list:d}); appState.categories=d; }
             });
         }
@@ -332,24 +343,47 @@
         }
         
         const renderSummaryAndChart = (view, txs) => {
-            const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-            const expense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            const filteredTxs = txs.filter(t => t.date && t.date.startsWith(appState.selectedMonth));
+            const income = filteredTxs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expense = filteredTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
             viewContainer.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div>
-                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">This Month's Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">This Month's Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">This Month's Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div>
                 </div>
                 ${renderIndividualAccountSummaries()}
                 <div class="grid grid-cols-1 gap-6">
                     <div>
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div>
+                        <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+                            <h2 class="text-2xl font-bold">Recent Transactions</h2>
+                            <div class="flex items-center gap-2">
+                                <button id="prevMonthBtn" class="p-2 glass-card rounded-md hover:bg-theme-light/10"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                                <input type="month" id="monthSelector" value="${appState.selectedMonth}" class="form-input w-auto">
+                                <button id="nextMonthBtn" class="p-2 glass-card rounded-md hover:bg-theme-light/10"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+                            </div>
+                            <button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button>
+                        </div>
                         <div id="txList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
                     </div>
                 </div>`;
-            renderTransactionList('txList', txs); 
+            renderTransactionList('txList', filteredTxs); 
             lucide.createIcons();
+
+            document.getElementById('monthSelector').addEventListener('change', (e) => {
+                appState.selectedMonth = e.target.value;
+                switchView(appState.currentView);
+            });
+            document.getElementById('prevMonthBtn').addEventListener('click', () => changeMonth(-1));
+            document.getElementById('nextMonthBtn').addEventListener('click', () => changeMonth(1));
         };
+
+        const changeMonth = (offset) => {
+            const currentDate = new Date(`${appState.selectedMonth}-02`); // Use day 2 to avoid timezone issues
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            appState.selectedMonth = currentDate.toISOString().slice(0, 7);
+            switchView(appState.currentView);
+        }
 
         const renderPersonalView = () => renderSummaryAndChart('Personal', appState.personalTransactions);
         const renderHomeView = () => renderSummaryAndChart('Home', appState.homeTransactions);
@@ -361,7 +395,7 @@
         
         function renderTransactionList(elId, txs) {
             const el = document.getElementById(elId); if (!el) return;
-            el.innerHTML = txs.length === 0 ? `<div class="glass-card p-8 text-center text-theme-light/70">No transactions yet.</div>` : txs.sort((a,b) => new Date(b.date) - new Date(a.date)).map(tx => { 
+            el.innerHTML = txs.length === 0 ? `<div class="glass-card p-8 text-center text-theme-light/70">No transactions for this month.</div>` : txs.sort((a,b) => new Date(b.date) - new Date(a.date)).map(tx => { 
                 const isExpense = tx.type === 'expense';
                 const acc = appState.accounts.find(a => a.id === tx.accountId); 
                 return `<div class="glass-card p-4 flex items-center justify-between">
