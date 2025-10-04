@@ -84,18 +84,52 @@
 
     <!-- Main App View (Initially Hidden) -->
     <div id="app" class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 hidden">
-        <header class="grid grid-cols-3 items-center mb-8 gap-4">
-            <div id="userProfile" class="flex items-center gap-3 justify-start"></div>
-            <div id="totalBalance" class="text-center"></div>
-            <div class="flex items-center justify-end gap-4">
-                <nav class="glass-card p-2 rounded-full">
-                    <div id="mainNav" class="flex items-center gap-2">
-                        <button onclick="switchView('personal')" data-view="personal" class="nav-button py-2 px-4 md:px-6 rounded-full text-xs md:text-sm font-semibold text-theme-light/80">Personal</button>
-                        <button onclick="switchView('home')" data-view="home" class="nav-button py-2 px-4 md:px-6 rounded-full text-xs md:text-sm font-semibold text-theme-light/80">Home</button>
-                        <button onclick="switchView('accounts')" data-view="accounts" class="nav-button py-2 px-4 md:px-6 rounded-full text-xs md:text-sm font-semibold text-theme-light/80">Accounts</button>
+        <header class="flex items-center justify-between mb-8 gap-4">
+            <!-- Left: App Title -->
+            <div class="flex items-center gap-2">
+                <i data-lucide="wallet" class="w-8 h-8 text-theme-light"></i>
+                <h1 class="text-xl md:text-2xl font-bold text-theme-light hidden sm:block">ExpenseTracker</h1>
+            </div>
+
+            <!-- Center: Main Navigation -->
+            <nav class="glass-card p-2 rounded-full">
+                <div id="mainNav" class="flex items-center gap-2">
+                    <button onclick="switchView('personal')" data-view="personal" class="nav-button py-2 px-6 rounded-full text-sm font-semibold text-theme-light/80">Personal</button>
+                    <button onclick="switchView('home')" data-view="home" class="nav-button py-2 px-6 rounded-full text-sm font-semibold text-theme-light/80">Home</button>
+                </div>
+            </nav>
+
+            <!-- Right: Profile & Settings Dropdown -->
+            <div class="flex items-center justify-end">
+                <div id="totalBalance" class="text-right mr-6 hidden lg:block">
+                     <!-- Total balance injected here -->
+                </div>
+                <div class="relative">
+                    <button id="profileDropdownBtn" class="flex items-center gap-3 cursor-pointer">
+                        <!-- User profile image will be injected here -->
+                    </button>
+                    <div id="profileDropdownMenu" class="absolute right-0 mt-3 w-60 glass-card rounded-xl shadow-lg z-50 hidden transition-opacity duration-300" style="padding: 0.5rem;">
+                        <div id="userProfileInfo" class="p-2 border-b border-theme-light/10 mb-2 flex items-center gap-3">
+                            <!-- User full info will be injected here -->
+                        </div>
+                        <div class="space-y-1">
+                            <a href="#" id="manageAccountsBtn" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-theme-light/80 hover:bg-theme-light/10 rounded-md">
+                                <i data-lucide="landmark" class="w-4 h-4"></i> Manage Accounts
+                            </a>
+                            <a href="#" onclick="openModal('addAccountTypeModal'); document.getElementById('profileDropdownMenu').classList.add('hidden');" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-theme-light/80 hover:bg-theme-light/10 rounded-md">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account
+                            </a>
+                            <a href="#" onclick="openModal('manageCategoriesModal'); document.getElementById('profileDropdownMenu').classList.add('hidden');" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-theme-light/80 hover:bg-theme-light/10 rounded-md">
+                               <i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories
+                            </a>
+                            <div class="border-t border-theme-light/10 !mt-2 pt-2">
+                                 <a href="#" id="signOutBtnDropdown" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-md">
+                                    <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </nav>
-                 <button id="signOutBtn" class="text-theme-light/70 hover:text-theme-light transition-all"><i data-lucide="log-out" class="w-6 h-6"></i></button>
+                </div>
             </div>
         </header>
         <main id="viewContainer"></main>
@@ -140,7 +174,7 @@
         };
 
         let db, auth, userId, appState = { accounts: [], personalTransactions: [], homeTransactions: [], categories: [], currentView: 'personal' }, charts = {};
-        const loginView = document.getElementById('loginView'), appView = document.getElementById('app'), viewContainer = document.getElementById('viewContainer'), loadingIndicator = document.getElementById('loadingIndicator'), mainNav = document.getElementById('mainNav'), signInBtn = document.getElementById('signInBtn'), signOutBtn = document.getElementById('signOutBtn');
+        const loginView = document.getElementById('loginView'), appView = document.getElementById('app'), viewContainer = document.getElementById('viewContainer'), loadingIndicator = document.getElementById('loadingIndicator'), mainNav = document.getElementById('mainNav'), signInBtn = document.getElementById('signInBtn');
 
         function initialize() {
             try {
@@ -154,6 +188,7 @@
                         appView.classList.remove('hidden');
                         displayUserProfile(user);
                         fetchInitialData();
+                        setupEventListeners();
                         switchView('personal');
                     } else {
                         userId = null;
@@ -166,10 +201,55 @@
             } catch (err) { console.error("Firebase init error: ", err); showToast("Error connecting to Firebase.", "error"); }
         }
 
-        signInBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (error) { console.error(error); showToast("Failed to sign in.", "error"); } });
-        signOutBtn.addEventListener('click', () => signOut(auth));
+        let eventListenersInitialized = false;
+        function setupEventListeners() {
+            if(eventListenersInitialized) return;
 
-        function displayUserProfile(user) { document.getElementById('userProfile').innerHTML = `<img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30"><div><p class="font-semibold text-sm">${user.displayName}</p><p class="text-xs text-theme-light/70">${user.email}</p></div>`; }
+            const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+            const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+
+            profileDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdownMenu.classList.toggle('hidden');
+            });
+            
+            document.addEventListener('click', (e) => {
+                // Close dropdown if clicked outside
+                if (!profileDropdownBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
+                    profileDropdownMenu.classList.add('hidden');
+                }
+                
+                // Dropdown menu actions
+                const manageAccountsBtn = e.target.closest('#manageAccountsBtn');
+                if (manageAccountsBtn) {
+                    e.preventDefault();
+                    switchView('accounts');
+                    profileDropdownMenu.classList.add('hidden');
+                }
+                const signOutBtnDropdown = e.target.closest('#signOutBtnDropdown');
+                if (signOutBtnDropdown) {
+                    e.preventDefault();
+                    signOut(auth);
+                }
+            });
+
+            signInBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (error) { console.error(error); showToast("Failed to sign in.", "error"); } });
+
+            eventListenersInitialized = true;
+        }
+
+        function displayUserProfile(user) { 
+            const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+            const userProfileInfo = document.getElementById('userProfileInfo');
+            profileDropdownBtn.innerHTML = `<img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30">`;
+            userProfileInfo.innerHTML = `
+                <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
+                <div>
+                    <p class="font-semibold text-sm truncate">${user.displayName}</p>
+                    <p class="text-xs text-theme-light/70 truncate">${user.email}</p>
+                </div>
+            `;
+        }
 
         function fetchInitialData() {
             if (!userId) return;
@@ -203,6 +283,9 @@
         window.switchView = (v) => {
             appState.currentView = v;
             mainNav.querySelectorAll('.nav-button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+            if (v === 'accounts') {
+                mainNav.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+            }
             const renders = { personal: renderPersonalView, home: renderHomeView, accounts: renderAccountsView };
             if (renders[v]) renders[v]();
         };
