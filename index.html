@@ -234,7 +234,7 @@
         });
 
         function renderAccountsView() {
-            viewContainer.innerHTML = `<div class="flex flex-wrap justify-between items-center gap-4 mb-6"><h2 class="text-3xl font-bold">My Accounts & Settings</h2><div class="flex items-center gap-4"><button onclick="openModal('manageCategoriesModal')" class="bg-theme-light/90 hover:bg-theme-light text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories</button><button id="addAccountBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account</button></div></div><div id="accountsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div><p id="noAccountsMessage" class="hidden text-center text-theme-light/70 py-8">No accounts found. Click 'Add Account' to get started.</p>`;
+            viewContainer.innerHTML = `<div class="flex flex-wrap justify-between items-center gap-4 mb-6"><h2 class="text-3xl font-bold">My Accounts & Settings</h2><div class="flex items-center gap-4"><button onclick="openModal('manageCategoriesModal')" class="bg-theme-light/90 hover:bg-theme-light text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="settings-2" class="w-4 h-4"></i> Manage Categories</button><button id="addAccountBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="plus-circle" class="w-4 h-4"></i> Add Account</button></div></div><div id="accountsList" class="space-y-8"></div><p id="noAccountsMessage" class="hidden text-center text-theme-light/70 py-8">No accounts found. Click 'Add Account' to get started.</p>`;
             renderAccountsList();
             document.getElementById('addAccountBtn').addEventListener('click', () => openModal('addAccountTypeModal'));
             renderCategoryList();
@@ -249,46 +249,75 @@
         function renderAccountsList() {
             const listEl = document.getElementById('accountsList'), msgEl = document.getElementById('noAccountsMessage');
             if (!listEl || !msgEl) return;
-            if (appState.accounts.length === 0) { listEl.classList.add('hidden'); msgEl.classList.remove('hidden'); return; }
-            listEl.classList.remove('hidden'); msgEl.classList.add('hidden');
-            
-            listEl.innerHTML = appState.accounts.map(acc => {
-                let details = '';
-                let balanceDisplayHtml = '';
+            if (appState.accounts.length === 0) { listEl.innerHTML = ''; msgEl.classList.remove('hidden'); return; }
+            listEl.innerHTML = ''; msgEl.classList.add('hidden');
 
-                if (acc.type === 'Bank' && acc.bankName) {
-                    details = `<p class="text-sm text-theme-light/60 mt-1">${acc.bankName}</p>`;
-                } else if ((acc.type === 'Credit Card' || acc.type === 'Debit Card') && acc.lastFour) {
-                    details = `<p class="text-sm text-theme-light/60 mt-1">${acc.bankName || ''} &bull; **** ${acc.lastFour}</p>`;
-                } else if (acc.type === 'UPI' && acc.upiId){
-                     details = `<p class="text-sm text-theme-light/60 mt-1">${acc.upiId}</p>`;
+            const groupedAccounts = appState.accounts.reduce((groups, acc) => {
+                const type = acc.type || 'Other';
+                if (!groups[type]) {
+                    groups[type] = [];
                 }
+                groups[type].push(acc);
+                return groups;
+            }, {});
 
-                if (acc.type === 'Credit Card') {
-                    balanceDisplayHtml = `<p class="text-lg mt-4"><span class="text-sm text-theme-light/70">Limit:</span> ₹${(acc.creditLimit || 0).toFixed(2)}</p>`;
-                } else if (acc.type === 'Debit Card' || acc.type === 'UPI') {
-                    const linkedBank = appState.accounts.find(b => b.type === 'Bank' && b.name === acc.linkedBank);
-                    const linkedBalance = linkedBank ? linkedBank.balance : 0;
-                    balanceDisplayHtml = `<p class="text-3xl font-bold mt-4">₹${(linkedBalance || 0).toFixed(2)}</p><p class="text-xs text-theme-light/60">From ${acc.linkedBank}</p>`;
-                } else {
-                    balanceDisplayHtml = `<p class="text-3xl font-bold mt-4">₹${(acc.balance || 0).toFixed(2)}</p>`;
-                }
+            const accountOrder = ['Bank', 'Credit Card', 'Debit Card', 'Wallet', 'UPI', 'Cash'];
 
-                return `<div class="glass-card p-6 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <span class="text-sm text-theme-light/70">${acc.type}</span>
-                            <div class="flex items-center gap-3">
-                                <button onclick="openEditAccountModal('${acc.id}')" class="text-theme-light/70 hover:text-theme-light"><i data-lucide="pencil" class="w-4 h-4"></i></button>
-                                <button onclick="deleteAccount('${acc.id}')" class="text-theme-light/70 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            accountOrder.forEach(type => {
+                if (groupedAccounts[type]) {
+                    const accountsOfType = groupedAccounts[type];
+                    const sectionWrapper = document.createElement('div');
+                    
+                    const sectionTitle = document.createElement('h3');
+                    sectionTitle.className = "text-xl font-semibold mb-4 border-b border-theme-light/20 pb-2";
+                    sectionTitle.textContent = `${type} Accounts`;
+                    
+                    const gridContainer = document.createElement('div');
+                    gridContainer.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
+
+                    gridContainer.innerHTML = accountsOfType.map(acc => {
+                         let details = '';
+                        let balanceDisplayHtml = '';
+
+                        if (acc.type === 'Bank' && acc.bankName) {
+                            details = `<p class="text-sm text-theme-light/60 mt-1">${acc.bankName}</p>`;
+                        } else if ((acc.type === 'Credit Card' || acc.type === 'Debit Card') && acc.lastFour) {
+                            details = `<p class="text-sm text-theme-light/60 mt-1">${acc.bankName || ''} &bull; **** ${acc.lastFour}</p>`;
+                        } else if (acc.type === 'UPI' && acc.upiId){
+                            details = `<p class="text-sm text-theme-light/60 mt-1">${acc.upiId}</p>`;
+                        }
+
+                        if (acc.type === 'Credit Card') {
+                            balanceDisplayHtml = `<p class="text-lg mt-4"><span class="text-sm text-theme-light/70">Limit:</span> ₹${(acc.creditLimit || 0).toFixed(2)}</p>`;
+                        } else if (acc.type === 'Debit Card' || acc.type === 'UPI') {
+                            const linkedBank = appState.accounts.find(b => b.type === 'Bank' && b.name === acc.linkedBank);
+                            const linkedBalance = linkedBank ? linkedBank.balance : 0;
+                            balanceDisplayHtml = `<p class="text-3xl font-bold mt-4">₹${(linkedBalance || 0).toFixed(2)}</p><p class="text-xs text-theme-light/60">From ${acc.linkedBank}</p>`;
+                        } else {
+                            balanceDisplayHtml = `<p class="text-3xl font-bold mt-4">₹${(acc.balance || 0).toFixed(2)}</p>`;
+                        }
+
+                        return `<div class="glass-card p-6 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start">
+                                    <span class="text-sm text-theme-light/70">${acc.type}</span>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="openEditAccountModal('${acc.id}')" class="text-theme-light/70 hover:text-theme-light"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                        <button onclick="deleteAccount('${acc.id}')" class="text-theme-light/70 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    </div>
+                                </div>
+                                <p class="text-xl font-semibold mt-1">${acc.name}</p>
+                                ${details}
                             </div>
-                        </div>
-                        <p class="text-xl font-semibold mt-1">${acc.name}</p>
-                        ${details}
-                    </div>
-                    ${balanceDisplayHtml}
-                </div>`;
-            }).join('');
+                            ${balanceDisplayHtml}
+                        </div>`;
+                    }).join('');
+                    
+                    sectionWrapper.appendChild(sectionTitle);
+                    sectionWrapper.appendChild(gridContainer);
+                    listEl.appendChild(sectionWrapper);
+                }
+            });
             lucide.createIcons();
         }
 
@@ -334,35 +363,34 @@
         document.getElementById('addPersonalTransactionForm').addEventListener('submit', (e) => txFormHandler(e, 'personal'));
         document.getElementById('addHomeTransactionForm').addEventListener('submit', (e) => txFormHandler(e, 'home'));
 
-        const accountFormHandler = async (e, type) => {
+        const accountFormHandler = async (e) => {
             e.preventDefault();
             loadingIndicator.style.display = 'flex';
             const form = e.target;
-            const data = { type };
+            const accountType = form.dataset.accountType;
+            const accountId = form.dataset.accountId;
 
-            // Manually build data object from form elements
-            // This is more robust than new FormData() for this case
+            const data = { type: accountType };
             Array.from(form.elements).forEach(el => {
                 if (el.name) {
                     const isNumeric = ['balance', 'lastFour', 'creditLimit'].includes(el.name);
-                    if (el.value) {
-                         data[el.name] = isNumeric ? parseFloat(el.value) : el.value;
+                    const value = el.value;
+                    if (value || (isNumeric && value === '0')) {
+                        data[el.name] = isNumeric ? parseFloat(value) : value;
                     }
                 }
             });
 
             try {
-                const accountId = data.accountId;
-                if (accountId) { // This is an UPDATE
-                    delete data.accountId;
+                if (accountId) { // UPDATE
                     await updateDoc(doc(db, `users/${userId}/accounts`, accountId), data);
                     showToast("Account updated!", "success");
-                } else { // This is a CREATE
+                } else { // CREATE
                     data.createdAt = serverTimestamp();
                     await addDoc(collection(db, `users/${userId}/accounts`), data);
                     showToast("Account added!", "success");
                 }
-                closeModal(`add${type.replace(/\s/g, '')}Modal`);
+                closeModal(`add${accountType.replace(/\s/g, '')}Modal`);
             } catch (err) {
                 console.error("Account operation failed: ", err);
                 showToast("Operation failed.", "error");
@@ -373,7 +401,10 @@
 
         ['Bank', 'Credit Card', 'Debit Card', 'Wallet', 'UPI', 'Cash'].forEach(type => {
             const form = document.getElementById(`add${type.replace(/\s/g, '')}Form`);
-            if (form) form.addEventListener('submit', (e) => accountFormHandler(e, type));
+            if (form) {
+                form.dataset.accountType = type;
+                form.addEventListener('submit', accountFormHandler);
+            }
         });
 
         window.openEditAccountModal = (accountId) => {
@@ -385,6 +416,7 @@
             if (!form) { console.error(`Form not found for type: ${type}`); return; }
 
             resetForm(form); 
+            form.dataset.accountId = accountId;
             
             for (const key in account) {
                 if (form.elements[key]) {
@@ -396,16 +428,7 @@
                 form.elements['balance'].disabled = true;
                 form.elements['balance'].value = '';
             }
-
-            let hiddenInput = form.querySelector('input[name="accountId"]');
-            if(!hiddenInput) {
-                hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'accountId';
-                form.appendChild(hiddenInput);
-            }
-            hiddenInput.value = accountId;
-
+            
             form.querySelector('.form-title').textContent = `Edit ${type} Account`;
             form.querySelector('.submit-btn').textContent = 'Update Account';
 
@@ -470,8 +493,7 @@
         function resetForm(form) {
             if (!form) return;
             form.reset();
-            const hiddenInput = form.querySelector('input[name="accountId"]');
-            if (hiddenInput) hiddenInput.remove();
+            delete form.dataset.accountId;
             
             if(form.elements['balance']) form.elements['balance'].disabled = false;
             
