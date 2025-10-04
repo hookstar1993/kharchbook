@@ -200,7 +200,7 @@
             const totalBalanceEl = document.getElementById('totalBalance');
             if (!totalBalanceEl) return;
             const totalBalance = appState.accounts
-                .filter(acc => acc.balance !== undefined)
+                .filter(acc => typeof acc.balance === 'number')
                 .reduce((sum, acc) => sum + acc.balance, 0);
             totalBalanceEl.innerHTML = `<p class="text-sm text-theme-light/70">Total Balance</p><p class="text-2xl font-bold">₹${totalBalance.toFixed(2)}</p>`;
         }
@@ -335,15 +335,25 @@
         document.getElementById('addHomeTransactionForm').addEventListener('submit', (e) => txFormHandler(e, 'home'));
 
         const accountFormHandler = async (e, type) => {
-            e.preventDefault(); loadingIndicator.style.display = 'flex';
+            e.preventDefault();
+            loadingIndicator.style.display = 'flex';
             const form = e.target;
             const data = { type };
-            const formData = new FormData(form);
-            formData.forEach((val, key) => data[key] = !isNaN(parseFloat(val)) && isFinite(val) && val !== '' ? parseFloat(val) : val);
-            
+
+            // Manually build data object from form elements
+            // This is more robust than new FormData() for this case
+            Array.from(form.elements).forEach(el => {
+                if (el.name) {
+                    const isNumeric = ['balance', 'lastFour', 'creditLimit'].includes(el.name);
+                    if (el.value) {
+                         data[el.name] = isNumeric ? parseFloat(el.value) : el.value;
+                    }
+                }
+            });
+
             try {
-                if (data.accountId) { // This is an UPDATE
-                    const accountId = data.accountId;
+                const accountId = data.accountId;
+                if (accountId) { // This is an UPDATE
                     delete data.accountId;
                     await updateDoc(doc(db, `users/${userId}/accounts`, accountId), data);
                     showToast("Account updated!", "success");
@@ -353,8 +363,12 @@
                     showToast("Account added!", "success");
                 }
                 closeModal(`add${type.replace(/\s/g, '')}Modal`);
-            } catch(err) { console.error(err); showToast("Operation failed.", "error"); }
-            finally { loadingIndicator.style.display = 'none'; }
+            } catch (err) {
+                console.error("Account operation failed: ", err);
+                showToast("Operation failed.", "error");
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
         };
 
         ['Bank', 'Credit Card', 'Debit Card', 'Wallet', 'UPI', 'Cash'].forEach(type => {
@@ -380,6 +394,7 @@
             
             if (form.elements['balance'] && ['Credit Card', 'Debit Card', 'UPI'].includes(type)) {
                 form.elements['balance'].disabled = true;
+                form.elements['balance'].value = '';
             }
 
             let hiddenInput = form.querySelector('input[name="accountId"]');
