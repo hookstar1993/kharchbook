@@ -105,13 +105,10 @@
                      <!-- Total balance injected here -->
                 </div>
                 <div class="relative">
-                    <button id="profileDropdownBtn" class="flex items-center gap-3 cursor-pointer">
-                        <!-- User profile image will be injected here -->
+                    <button id="profileDropdownBtn" class="flex items-center gap-3 cursor-pointer p-1 rounded-lg hover:bg-white/10">
+                        <!-- User profile injected here -->
                     </button>
-                    <div id="profileDropdownMenu" class="absolute right-0 mt-3 w-64 glass-card rounded-xl shadow-lg z-50 hidden transition-opacity duration-300" style="padding: 0.5rem;">
-                        <div id="userProfileInfo" class="p-2 border-b border-theme-light/10 mb-2 flex items-center gap-3">
-                            <!-- User full info will be injected here -->
-                        </div>
+                    <div id="profileDropdownMenu" class="absolute right-0 mt-3 w-64 glass-card rounded-xl shadow-lg z-50 hidden transition-opacity duration-300 p-2">
                         <div class="space-y-1">
                             <a href="#" id="manageAccountsBtn" class="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-theme-light/80 hover:bg-theme-light/10 rounded-md">
                                 <i data-lucide="landmark" class="w-4 h-4"></i> Manage Accounts
@@ -258,13 +255,11 @@
 
         function displayUserProfile(user) { 
             const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-            const userProfileInfo = document.getElementById('userProfileInfo');
-            profileDropdownBtn.innerHTML = `<img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30">`;
-            userProfileInfo.innerHTML = `
-                <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
-                <div class="overflow-hidden">
-                    <p class="font-semibold text-sm">${user.displayName}</p>
-                    <p class="text-xs text-theme-light/70">${user.email}</p>
+            profileDropdownBtn.innerHTML = `
+                <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full border-2 border-theme-light/30">
+                <div class="text-left hidden md:block">
+                     <p class="font-semibold text-sm leading-tight">${user.displayName}</p>
+                     <p class="text-xs text-theme-light/70 leading-tight">${user.email}</p>
                 </div>
             `;
         }
@@ -346,18 +341,13 @@
                     <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div>
                 </div>
                 ${renderIndividualAccountSummaries()}
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                    <div class="lg:col-span-3">
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
                         <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div>
-                        <div id="txList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div>
-                    </div>
-                    <div class="lg:col-span-2 glass-card p-6">
-                        <h3 class="text-lg font-semibold mb-4">Spending by Category</h3>
-                        <canvas id="spendingChart"></canvas>
+                        <div id="txList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
                     </div>
                 </div>`;
             renderTransactionList('txList', txs); 
-            createCategoryDoughnutChart('spendingChart', txs);
             lucide.createIcons();
         };
 
@@ -469,16 +459,6 @@
                 }
             });
             lucide.createIcons();
-        }
-
-        function createCategoryDoughnutChart(id, txs) {
-            const canvas = document.getElementById(id); if (!canvas) return;
-            const data = txs.filter(t=>t.type==='expense').reduce((a, t) => { a[t.category]=(a[t.category]||0)+t.amount; return a; }, {});
-            if (charts[id]) charts[id].destroy();
-            const noData = canvas.parentNode.querySelector('.no-data-msg'); if (noData) noData.remove();
-            if (Object.keys(data).length === 0) { canvas.style.display='none'; canvas.insertAdjacentHTML('afterend', `<div class="no-data-msg text-center text-theme-light/70 py-10">No expense data.</div>`); return; }
-            canvas.style.display = 'block';
-            charts[id] = new Chart(canvas.getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: ['#fbf8BE','#D9D7A0','#A6A473','#73725A','#595842'], borderColor: '#234E70' }] }, options: { plugins: { legend: { position: 'bottom', labels: { color: '#fbf8BE' } } } } });
         }
         
         window.openModal = (id) => { const el=document.getElementById(id); if(el) {el.style.display='flex'; setTimeout(()=>el.querySelector('.glass-card').style.opacity='1', 50); lucide.createIcons();} };
@@ -799,6 +779,4 @@
     </script>
 </body>
 </html>
-
-
 
