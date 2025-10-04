@@ -215,7 +215,7 @@
             
             document.addEventListener('click', (e) => {
                 // Close dropdown if clicked outside
-                if (!profileDropdownBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
+                if (profileDropdownBtn && !profileDropdownBtn.contains(e.target) && profileDropdownMenu && !profileDropdownMenu.contains(e.target)) {
                     profileDropdownMenu.classList.add('hidden');
                 }
                 
@@ -230,6 +230,24 @@
                 if (signOutBtnDropdown) {
                     e.preventDefault();
                     signOut(auth);
+                }
+
+                // Add Transaction Button Logic
+                const addTxBtn = e.target.closest('#addTxBtn');
+                if (addTxBtn) {
+                    const type = appState.currentView.charAt(0).toUpperCase() + appState.currentView.slice(1);
+                    const modalId = `add${type}TransactionModal`;
+                    const formId = `add${type}TransactionForm`;
+                    const form = document.getElementById(formId);
+
+                    if (form) {
+                        // Ensure form is reset to "Add" mode, clearing any "Edit" data
+                        resetForm(form); 
+                        form.querySelector('[id*="Date"]').valueAsDate = new Date();
+                        populateAllAccountsDropdown(form.querySelector('[id*="Account"]').id);
+                        populateCategoriesDropdown(form.querySelector('[id*="Category"]').id);
+                        openModal(modalId);
+                    }
                 }
             });
 
@@ -781,5 +799,6 @@
     </script>
 </body>
 </html>
+
 
 
