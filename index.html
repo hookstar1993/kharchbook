@@ -378,17 +378,18 @@
             const accountType = form.dataset.accountType;
             const accountId = form.dataset.accountId;
 
+            const formData = new FormData(form);
             const data = { type: accountType };
-            Array.from(form.elements).forEach(el => {
-                if (el.name) {
-                    const isNumeric = ['balance', 'lastFour', 'creditLimit'].includes(el.name);
-                    const value = el.value;
-                    if (value || (isNumeric && value === '0')) {
-                        data[el.name] = isNumeric ? parseFloat(value) : value;
-                    }
-                }
-            });
 
+            for (let [key, value] of formData.entries()) {
+                const isNumeric = ['balance', 'lastFour', 'creditLimit'].includes(key);
+                if (isNumeric && value !== '') {
+                    data[key] = parseFloat(value);
+                } else if (!isNumeric) {
+                    data[key] = value;
+                }
+            }
+            
             try {
                 if (accountId) { // UPDATE
                     await updateDoc(doc(db, `users/${userId}/accounts`, accountId), data);
