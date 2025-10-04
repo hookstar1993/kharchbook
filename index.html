@@ -262,6 +262,14 @@
             }, {});
 
             const accountOrder = ['Bank', 'Credit Card', 'Debit Card', 'Wallet', 'UPI', 'Cash'];
+            const typeIcons = {
+                'Bank': 'landmark',
+                'Credit Card': 'credit-card',
+                'Debit Card': 'credit-card',
+                'Wallet': 'wallet',
+                'UPI': 'zap',
+                'Cash': 'banknote'
+            };
 
             accountOrder.forEach(type => {
                 if (groupedAccounts[type]) {
@@ -269,8 +277,8 @@
                     const sectionWrapper = document.createElement('div');
                     
                     const sectionTitle = document.createElement('h3');
-                    sectionTitle.className = "text-xl font-semibold mb-4 border-b border-theme-light/20 pb-2";
-                    sectionTitle.textContent = `${type} Accounts`;
+                    sectionTitle.className = "text-xl font-semibold mb-4 border-b border-theme-light/20 pb-2 flex items-center gap-3";
+                    sectionTitle.innerHTML = `<i data-lucide="${typeIcons[type] || 'help-circle'}" class="w-6 h-6 text-theme-light/80"></i> <span>${type} Accounts</span>`;
                     
                     const gridContainer = document.createElement('div');
                     gridContainer.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
