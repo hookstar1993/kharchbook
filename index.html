@@ -327,19 +327,30 @@
             const accountCardsHtml = appState.accounts.map(acc => {
                 let balanceHtml = '';
                 if (['Bank', 'Wallet', 'Cash'].includes(acc.type)) {
-                    balanceHtml = `<p class="text-xl font-bold">₹${(acc.balance || 0).toFixed(2)}</p>`;
+                    balanceHtml = `<p class="text-lg font-bold">₹${(acc.balance || 0).toFixed(2)}</p>`;
                 } else if (acc.type === 'Credit Card') {
-                    balanceHtml = `<div><span class="text-xs text-theme-light/70">Limit</span><p class="text-xl font-bold">₹${(acc.creditLimit || 0).toFixed(2)}</p></div>`;
+                    balanceHtml = `<div><span class="text-xs text-theme-light/70">Limit</span><p class="text-lg font-bold">₹${(acc.creditLimit || 0).toFixed(2)}</p></div>`;
                 } else if (['Debit Card', 'UPI'].includes(acc.type)) {
                     const linkedBank = appState.accounts.find(b => b.type === 'Bank' && b.name === acc.linkedBank);
                     const linkedBalance = linkedBank ? linkedBank.balance : 0;
-                    balanceHtml = `<div><p class="text-xl font-bold">₹${(linkedBalance || 0).toFixed(2)}</p><span class="text-xs text-theme-light/70">from ${acc.linkedBank}</span></div>`;
+                    balanceHtml = `<div><p class="text-lg font-bold">₹${(linkedBalance || 0).toFixed(2)}</p><span class="text-xs text-theme-light/60">from ${acc.linkedBank}</span></div>`;
                 }
                 if (!balanceHtml) return '';
-                return `<div class="glass-card p-4"><div class="flex items-center gap-3"><i data-lucide="${getIconForType(acc.type)}" class="w-6 h-6 text-theme-light/70"></i><div><h4 class="text-sm font-medium text-theme-light/70 truncate">${acc.name}</h4>${balanceHtml}</div></div></div>`;
+                return `<div class="glass-card p-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="${getIconForType(acc.type)}" class="w-5 h-5 text-theme-light/70"></i>
+                                <div>
+                                    <h4 class="text-sm font-medium text-theme-light/70 truncate">${acc.name}</h4>
+                                    ${balanceHtml}
+                                </div>
+                            </div>
+                        </div>`;
             }).join('');
 
-            return `<div class="border-t border-theme-light/10 mt-8 pt-6 mb-8"><h3 class="text-lg font-semibold mb-4 text-theme-light/80">All Account Balances</h3><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">${accountCardsHtml}</div></div>`;
+            return `<div class="border-t border-theme-light/10 mt-8 pt-6 mb-8">
+                        <h3 class="text-lg font-semibold mb-4 text-theme-light/80">All Account Balances</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">${accountCardsHtml}</div>
+                    </div>`;
         }
         
         const renderSummaryAndChart = (view, txs) => {
