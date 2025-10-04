@@ -289,27 +289,62 @@
             const renders = { personal: renderPersonalView, home: renderHomeView, accounts: renderAccountsView };
             if (renders[v]) renders[v]();
         };
+
+        function getIconForType(type) {
+            const typeIcons = {
+                'Bank': 'landmark', 'Credit Card': 'credit-card', 'Debit Card': 'credit-card',
+                'Wallet': 'wallet', 'UPI': 'zap', 'Cash': 'banknote'
+            };
+            return typeIcons[type] || 'help-circle';
+        }
+
+        function renderIndividualAccountSummaries() {
+            if (appState.accounts.length === 0) return '';
+            const accountCardsHtml = appState.accounts.map(acc => {
+                let balanceHtml = '';
+                if (['Bank', 'Wallet', 'Cash'].includes(acc.type)) {
+                    balanceHtml = `<p class="text-xl font-bold">₹${(acc.balance || 0).toFixed(2)}</p>`;
+                } else if (acc.type === 'Credit Card') {
+                    balanceHtml = `<div><span class="text-xs text-theme-light/70">Limit</span><p class="text-xl font-bold">₹${(acc.creditLimit || 0).toFixed(2)}</p></div>`;
+                } else if (['Debit Card', 'UPI'].includes(acc.type)) {
+                    const linkedBank = appState.accounts.find(b => b.type === 'Bank' && b.name === acc.linkedBank);
+                    const linkedBalance = linkedBank ? linkedBank.balance : 0;
+                    balanceHtml = `<div><p class="text-xl font-bold">₹${(linkedBalance || 0).toFixed(2)}</p><span class="text-xs text-theme-light/70">from ${acc.linkedBank}</span></div>`;
+                }
+                if (!balanceHtml) return '';
+                return `<div class="glass-card p-4"><div class="flex items-center gap-3"><i data-lucide="${getIconForType(acc.type)}" class="w-6 h-6 text-theme-light/70"></i><div><h4 class="text-sm font-medium text-theme-light/70 truncate">${acc.name}</h4>${balanceHtml}</div></div></div>`;
+            }).join('');
+
+            return `<div class="border-t border-theme-light/10 mt-8 pt-6 mb-8"><h3 class="text-lg font-semibold mb-4 text-theme-light/80">All Account Balances</h3><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">${accountCardsHtml}</div></div>`;
+        }
         
         const renderSummaryAndChart = (view, txs) => {
-            const income = txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0), expense = txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-            viewContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"><div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div><div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div><div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div></div><div class="grid grid-cols-1 lg:grid-cols-5 gap-6"><div class="lg:col-span-3"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div><div id="txList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div></div><div class="lg:col-span-2 glass-card p-6"><h3 class="text-lg font-semibold mb-4">Spending by Category</h3><canvas id="spendingChart"></canvas></div></div>`;
-            renderTransactionList('txList', txs); createCategoryDoughnutChart('spendingChart', txs);
+            const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            viewContainer.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Balance</h3><p class="text-3xl font-bold mt-2">₹${(income - expense).toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Income</h3><p class="text-3xl font-bold text-green-400 mt-2">₹${income.toFixed(2)}</p></div>
+                    <div class="glass-card p-6"><h3 class="text-sm font-medium text-theme-light/70">${view} Expense</h3><p class="text-3xl font-bold text-red-400 mt-2">₹${expense.toFixed(2)}</p></div>
+                </div>
+                ${renderIndividualAccountSummaries()}
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    <div class="lg:col-span-3">
+                        <div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Recent Transactions</h2><button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button></div>
+                        <div id="txList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2"></div>
+                    </div>
+                    <div class="lg:col-span-2 glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Spending by Category</h3>
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                </div>`;
+            renderTransactionList('txList', txs); 
+            createCategoryDoughnutChart('spendingChart', txs);
+            lucide.createIcons();
         };
 
         const renderPersonalView = () => renderSummaryAndChart('Personal', appState.personalTransactions);
         const renderHomeView = () => renderSummaryAndChart('Home', appState.homeTransactions);
-
-        document.addEventListener('click', (e) => {
-            const addTxBtn = e.target.closest('#addTxBtn');
-            if (addTxBtn) {
-                const type = appState.currentView.charAt(0).toUpperCase() + appState.currentView.slice(1);
-                const formId = `add${type}TransactionForm`, form = document.getElementById(formId);
-                form.reset(); form.querySelector('[id*="Date"]').valueAsDate = new Date();
-                populateAllAccountsDropdown(form.querySelector('[id*="Account"]').id);
-                populateCategoriesDropdown(form.querySelector('[id*="Category"]').id);
-                openModal(`add${type}TransactionModal`);
-            }
-        });
 
         function renderAccountsView() {
             viewContainer.innerHTML = `<div class="flex flex-wrap justify-between items-center gap-4 mb-6"><h2 class="text-3xl font-bold">My Accounts</h2></div><div id="accountsList" class="space-y-8"></div><p id="noAccountsMessage" class="hidden text-center text-theme-light/70 py-8">No accounts found. Use the profile menu to add an account.</p>`;
@@ -359,14 +394,6 @@
             }, {});
 
             const accountOrder = ['Bank', 'Credit Card', 'Debit Card', 'Wallet', 'UPI', 'Cash'];
-            const typeIcons = {
-                'Bank': 'landmark',
-                'Credit Card': 'credit-card',
-                'Debit Card': 'credit-card',
-                'Wallet': 'wallet',
-                'UPI': 'zap',
-                'Cash': 'banknote'
-            };
 
             accountOrder.forEach(type => {
                 if (groupedAccounts[type]) {
@@ -375,7 +402,7 @@
                     
                     const sectionTitle = document.createElement('h3');
                     sectionTitle.className = "text-xl font-semibold mb-4 border-b border-theme-light/20 pb-2 flex items-center gap-3";
-                    sectionTitle.innerHTML = `<i data-lucide="${typeIcons[type] || 'help-circle'}" class="w-6 h-6 text-theme-light/80"></i> <span>${type} Accounts</span>`;
+                    sectionTitle.innerHTML = `<i data-lucide="${getIconForType(type)}" class="w-6 h-6 text-theme-light/80"></i> <span>${type} Accounts</span>`;
                     
                     const gridContainer = document.createElement('div');
                     gridContainer.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
@@ -731,6 +758,13 @@
             delete form.dataset.accountId;
             delete form.dataset.accountType;
             delete form.dataset.editId; // Clear transaction edit id
+
+             // Reset transaction modal titles and button text
+            const modal = form.closest('.fixed');
+            if(modal && (modal.id.includes('PersonalTransactionModal') || modal.id.includes('HomeTransactionModal'))) {
+                modal.querySelector('h2').textContent = modal.querySelector('h2').textContent.replace('Edit', 'Add');
+                modal.querySelector('button[type="submit"]').textContent = 'Save Transaction';
+            }
         }
         
         function showToast(message, type = 'success') {
