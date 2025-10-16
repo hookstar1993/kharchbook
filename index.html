@@ -22,8 +22,10 @@
             }
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         body {
@@ -188,6 +190,16 @@
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
+                
+                signInBtn.addEventListener('click', async () => { 
+                    try { 
+                        await signInWithPopup(auth, new GoogleAuthProvider()); 
+                    } catch (error) { 
+                        console.error(error); 
+                        showToast("Failed to sign in.", "error"); 
+                    } 
+                });
+
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         userId = user.uid;
@@ -253,8 +265,6 @@
                     }
                 }
             });
-
-            signInBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (error) { console.error(error); showToast("Failed to sign in.", "error"); } });
 
             eventListenersInitialized = true;
         }
@@ -373,7 +383,11 @@
                                 <input type="month" id="monthSelector" value="${appState.selectedMonth}" class="form-input w-auto">
                                 <button id="nextMonthBtn" class="p-2 glass-card rounded-md hover:bg-theme-light/10"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
                             </div>
-                            <button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button>
+                            <div class="flex items-center gap-2">
+                                <button id="downloadMonthPdfBtn" class="bg-theme-light/20 hover:bg-theme-light/30 text-theme-light font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="file-down" class="w-4 h-4"></i> Monthly PDF</button>
+                                <button id="downloadYearPdfBtn" class="bg-theme-light/20 hover:bg-theme-light/30 text-theme-light font-bold py-2 px-4 rounded-lg flex items-center gap-2 text-sm"><i data-lucide="file-down" class="w-4 h-4"></i> Yearly PDF</button>
+                                <button id="addTxBtn" class="bg-theme-light hover:bg-theme-light/90 text-theme-dark font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Add</button>
+                            </div>
                         </div>
                         <div id="txList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
                     </div>
@@ -387,6 +401,8 @@
             });
             document.getElementById('prevMonthBtn').addEventListener('click', () => changeMonth(-1));
             document.getElementById('nextMonthBtn').addEventListener('click', () => changeMonth(1));
+            document.getElementById('downloadMonthPdfBtn').addEventListener('click', () => generatePDF('month', appState.currentView));
+            document.getElementById('downloadYearPdfBtn').addEventListener('click', () => generatePDF('year', appState.currentView));
         };
 
         const changeMonth = (offset) => {
@@ -820,9 +836,91 @@
             setTimeout(() => toast.remove(), 3000);
         }
         
+        window.generatePDF = (period, view) => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const transactions = appState[`${view}Transactions`];
+            const selectedYear = appState.selectedMonth.slice(0, 4);
+            const selectedMonthName = new Date(`${appState.selectedMonth}-02`).toLocaleString('default', { month: 'long' });
+
+            let filteredTxs;
+            let title;
+            let filename;
+
+            if (period === 'month') {
+                filteredTxs = transactions.filter(t => t.date && t.date.startsWith(appState.selectedMonth));
+                title = `${view.charAt(0).toUpperCase() + view.slice(1)} Report for ${selectedMonthName}, ${selectedYear}`;
+                filename = `Report-${view}-${appState.selectedMonth}.pdf`;
+            } else { // year
+                filteredTxs = transactions.filter(t => t.date && t.date.startsWith(selectedYear));
+                title = `${view.charAt(0).toUpperCase() + view.slice(1)} Report for ${selectedYear}`;
+                filename = `Report-${view}-${selectedYear}.pdf`;
+            }
+
+            if (filteredTxs.length === 0) {
+                showToast(`No transactions found for this ${period}.`, 'warning');
+                return;
+            }
+
+            const income = filteredTxs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            const expense = filteredTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            const savings = income - expense;
+
+            // Add Title
+            doc.setFontSize(18);
+            doc.text(title, 14, 22);
+
+            // Add Summary
+            doc.setFontSize(12);
+            doc.text(`Total Income:  Rs. ${income.toFixed(2)}`, 14, 32);
+            doc.text(`Total Expense: Rs. ${expense.toFixed(2)}`, 14, 38);
+            doc.setFontSize(14);
+            doc.setTextColor(savings >= 0 ? '#4CAF50' : '#F44336');
+            doc.text(`Net Savings:   Rs. ${savings.toFixed(2)}`, 14, 46);
+            doc.setTextColor(0, 0, 0); // Reset color to black
+
+            // Prepare table data
+            const head = [['Date', 'Description', 'Category', 'Account', 'Type', 'Amount (Rs)']];
+            const body = filteredTxs
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .map(tx => {
+                    const acc = appState.accounts.find(a => a.id === tx.accountId);
+                    return [
+                        new Date(tx.date).toLocaleDateString(),
+                        tx.description,
+                        tx.category,
+                        acc ? acc.name : 'N/A',
+                        tx.type.charAt(0).toUpperCase() + tx.type.slice(1),
+                        tx.amount.toFixed(2)
+                    ];
+                });
+
+            // Add table
+            doc.autoTable({
+                head: head,
+                body: body,
+                startY: 55,
+                theme: 'grid',
+                headStyles: { fillColor: [35, 78, 112] }, // theme-dark color
+                didDrawCell: (data) => {
+                    if (data.section === 'body' && data.column.index === 5) {
+                        const type = data.row.raw[4].toString();
+                        if (type === 'Expense') {
+                            doc.setTextColor(244, 67, 54); // Red
+                        } else if (type === 'Income') {
+                            doc.setTextColor(76, 175, 80); // Green
+                        }
+                    }
+                }
+            });
+
+            // Save PDF
+            doc.save(filename);
+        }
+
         initialize();
     </script>
 </body>
 </html>
-
 
